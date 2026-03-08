@@ -3,318 +3,327 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Viya PMS Export Builder Final</title>
+<title>Rooming Tools Hub</title>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
-body{font-family:Arial,Helvetica,sans-serif;background:#f7f8fb;color:#1f2937;margin:0}
-.wrap{max-width:1220px;margin:0 auto;padding:24px}
+:root{
+  --bg:#f6f8fb;--card:#fff;--text:#1f2937;--muted:#6b7280;--line:#dbe2ea;
+  --nav:#0f172a;--nav2:#111827;--ok:#065f46;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
+.app{display:grid;grid-template-columns:270px 1fr;min-height:100vh}
+.sidebar{background:linear-gradient(180deg,var(--nav),var(--nav2));color:#fff;padding:22px}
+.brand{font-size:22px;font-weight:700;margin-bottom:8px}
+.sub{font-size:13px;color:#cbd5e1;line-height:1.4;margin-bottom:22px}
+.navbtn{
+  width:100%;text-align:left;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);
+  color:#fff;padding:12px 14px;border-radius:14px;margin-bottom:10px;cursor:pointer;font-size:14px
+}
+.navbtn.active{background:#fff;color:#111827;font-weight:700}
+.main{padding:22px}
+.page{display:none}
+.page.active{display:block}
 h1{margin:0 0 8px;font-size:28px}
-.sub{color:#6b7280;margin:0 0 18px}
-.card{background:#fff;border:1px solid #dbe2ea;border-radius:16px;padding:16px;box-shadow:0 8px 24px rgba(15,23,42,.06);margin-bottom:16px}
+.desc{margin:0 0 18px;color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 8px 24px rgba(15,23,42,.06);margin-bottom:16px}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-label{display:block;font-size:13px;color:#6b7280;margin-bottom:6px}
-input,select,button{width:100%;padding:10px 12px;border:1px solid #dbe2ea;border-radius:12px;font-size:14px;box-sizing:border-box}
+label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+input,select,button,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:12px;font-size:14px;box-sizing:border-box;background:#fff}
+textarea{min-height:280px;resize:vertical}
 button{cursor:pointer;font-weight:700;background:#111827;color:#fff}
 button.secondary{background:#fff;color:#111827}
-button.green{background:#065f46}
+button.green{background:var(--ok)}
 .row{display:flex;gap:10px;flex-wrap:wrap}
 .row button{width:auto}
+.table-wrap{max-height:520px;overflow:auto;border:1px solid var(--line);border-radius:14px}
 table{width:100%;border-collapse:collapse}
 th,td{padding:8px 10px;border-bottom:1px solid #eef2f7;text-align:left;font-size:14px}
 th{background:#f8fafc;position:sticky;top:0}
 th:nth-child(1), td:nth-child(1){width:60px}
-th:nth-child(6), td:nth-child(6){width:170px}
-.table-wrap{max-height:560px;overflow:auto;border:1px solid #dbe2ea;border-radius:14px}
+th:nth-child(6), td:nth-child(6){width:160px}
 .note{background:#fffbeb;border:1px solid #fde68a;color:#92400e;padding:10px 12px;border-radius:12px;font-size:13px}
 .ok{background:#ecfdf5;border:1px solid #a7f3d0;color:#065f46;padding:10px 12px;border-radius:12px;font-size:13px}
 .log{white-space:pre-wrap;background:#0f172a;color:#e2e8f0;padding:12px;border-radius:12px;font-family:ui-monospace,monospace;font-size:12px;min-height:90px}
 .stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
-.stat{background:#f8fafc;border:1px solid #dbe2ea;border-radius:14px;padding:12px}
+.stat{background:#f8fafc;border:1px solid var(--line);border-radius:14px;padding:12px}
 .stat b{display:block;font-size:22px}
-.small{font-size:12px;color:#6b7280}
-@media (max-width:980px){.grid,.stats{grid-template-columns:1fr}}
+.small{font-size:12px;color:var(--muted)}
+.pill{display:inline-block;padding:4px 9px;border-radius:999px;background:#eef2ff;color:#3730a3;font-size:12px;font-weight:700;margin-right:6px;margin-bottom:6px}
+td input, td select{padding:7px 8px;font-size:13px}
+.coming{font-size:15px;line-height:1.6;color:#334155}
+@media (max-width:980px){.app{grid-template-columns:1fr}.sidebar{padding-bottom:10px}.grid,.stats{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <h1>Viya PMS Export Builder Final</h1>
-  <p class="sub">Analysiert die Viya-Liste blockweise: <b>1.Room</b> Zeile liefert den Namen, die nächste passende Type-Zeile liefert den Room Type. Exportiert genau <b>1 Zeile pro Zimmer</b>.</p>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">Rooming Tools Hub</div>
+    <div class="sub">Getrennte Module pro Kunde. Das PMS-Standard-Template ist fest eingebunden und wird für alle Module automatisch geladen.</div>
+    <button class="navbtn active" data-page="page-viya">Viya Travel</button>
+    <button class="navbtn" data-page="page-eme">Emetravel</button>
+    <button class="navbtn" data-page="page-exa">Exa Travel</button>
+    <button class="navbtn" data-page="page-future">Weitere Kunden</button>
+  </aside>
 
-  <div class="card">
-    <div class="note">
-      <b>Fixe PMS-Codes:</b> Double = <b>DBL</b>, Twin = <b>TWI</b>, Triple = <b>TRI</b>.<br>
-      <b>Leselogik:</b> Pro Zimmer wird die Zeile <b>1.Room / 2.Room / 3.Room ...</b> als Hauptzeile gelesen.  
-      Der <b>erste Name</b> dieser Room-Zeile wird importiert.  
-      Der <b>Room Type</b> wird aus der nächsten Zeile mit <b>Double / Twin / Triple / Single</b> gelesen.  
-      Zusätzliche Gastzeilen werden ignoriert.
-    </div>
-  </div>
+  <main class="main">
 
-  <div class="card">
-    <div class="grid">
-      <div>
-        <label>Viya Rooming List</label>
-        <input id="viyaFile" type="file" accept=".xlsx,.xls">
-      </div>
-      <div>
-        <label>PMS Template (optional)</label>
-        <input id="templateFile" type="file" accept=".xlsx,.xls">
-      </div>
-      <div>
-        <label>Anreise</label>
-        <input id="arrival" type="date">
-      </div>
-      <div>
-        <label>Abreise</label>
-        <input id="departure" type="date">
-      </div>
-      <div>
-        <label>Single exportieren als</label>
-        <select id="singleMode">
-          <option value="DBL">DBL</option>
-          <option value="TWI">TWI</option>
-        </select>
-      </div>
-      <div>
-        <label>Payment</label>
-        <select id="payment">
-          <option value="CA">CA</option>
-          <option value="CC">CC</option>
-          <option value="BT">BT</option>
-        </select>
-      </div>
-    </div>
-    <div style="height:12px"></div>
-    <div class="row">
-      <button id="analyzeBtn">Viya analysieren</button>
-      <button id="exportBtn" class="green">Mit Template exportieren</button>
-      <button id="exportBlankBtn" class="secondary">Ohne Template exportieren</button>
-    </div>
-  </div>
+    <section id="page-viya" class="page active">
+      <h1>Viya Travel</h1>
+      <p class="desc">Eigene Logik für das Viya-Format. Getrennt von Emetravel und Exa Travel.</p>
 
-  <div class="card">
-    <div class="stats">
-      <div class="stat"><b id="statRooms">0</b><span class="small">erkannte Zimmer</span></div>
-      <div class="stat"><b id="statDBL">0</b><span class="small">DBL</span></div>
-      <div class="stat"><b id="statTWI">0</b><span class="small">TWI</span></div>
-      <div class="stat"><b id="statTRI">0</b><span class="small">TRI</span></div>
-      <div class="stat"><b id="statAdults">0</b><span class="small">Adults gesamt</span></div>
-    </div>
-    <div style="height:12px"></div>
-    <div class="ok" id="summary">Noch keine Datei analysiert.</div>
-  </div>
+      <div class="card">
+        <div class="note">
+          <b>Fixe PMS-Codes:</b> Double = <b>DBL</b>, Twin = <b>TWI</b>, Triple = <b>TRI</b>.<br>
+          Pro Zimmer wird die Zeile <b>1.Room / 2.Room / 3.Room ...</b> als Hauptzeile gelesen.
+          Der Room Type wird aus der nächsten passenden Zeile mit <b>Double / Twin / Triple / Single</b> gelesen.
+        </div>
+      </div>
 
-  <div class="card">
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Line</th>
-            <th>Name</th>
-            <th>First Name</th>
-            <th>Arrival</th>
-            <th>Departure</th>
-            <th>Room Type</th>
-            <th>Adult</th>
-            <th>Payment</th>
-            <th>Specials</th>
-          </tr>
-        </thead>
-        <tbody id="tbody"></tbody>
-      </table>
-    </div>
-  </div>
+      <div class="card">
+        <div class="grid">
+          <div><label>Viya Rooming List</label><input id="viyaFile" type="file" accept=".xlsx,.xls"></div>
+          <div><label>PMS Template</label><input value="Standard Template aktiv" disabled></div>
+          <div><label>Anreise</label><input id="viyaArrival" type="date"></div>
+          <div><label>Abreise</label><input id="viyaDeparture" type="date"></div>
+          <div>
+            <label>Single exportieren als</label>
+            <select id="viyaSingleMode"><option value="DBL">DBL</option><option value="TWI">TWI</option></select>
+          </div>
+          <div>
+            <label>Payment</label>
+            <select id="viyaPayment"><option value="CA">CA</option><option value="CC">CC</option><option value="BT">BT</option></select>
+          </div>
+        </div>
+        <div style="height:12px"></div>
+        <div class="row">
+          <button id="viyaAnalyzeBtn">Viya analysieren</button>
+          <button id="viyaExportBtn" class="green">Mit Standard-Template exportieren</button>
+          <button id="viyaExportBlankBtn" class="secondary">Ohne Template exportieren</button>
+        </div>
+      </div>
 
-  <div class="card">
-    <div id="log" class="log"></div>
-  </div>
+      <div class="card">
+        <div class="stats">
+          <div class="stat"><b id="viyaStatRooms">0</b><span class="small">erkannte Zimmer</span></div>
+          <div class="stat"><b id="viyaStatDBL">0</b><span class="small">DBL</span></div>
+          <div class="stat"><b id="viyaStatTWI">0</b><span class="small">TWI</span></div>
+          <div class="stat"><b id="viyaStatTRI">0</b><span class="small">TRI</span></div>
+          <div class="stat"><b id="viyaStatAdults">0</b><span class="small">Adults gesamt</span></div>
+        </div>
+        <div style="height:12px"></div>
+        <div class="ok" id="viyaSummary">Noch keine Datei analysiert.</div>
+      </div>
+
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Line</th><th>Name</th><th>First Name</th><th>Arrival</th><th>Departure</th><th>Room Type</th><th>Adult</th><th>Payment</th><th>Specials</th>
+              </tr>
+            </thead>
+            <tbody id="viyaTbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card"><div id="viyaLog" class="log"></div></div>
+    </section>
+
+    <section id="page-eme" class="page">
+      <h1>Emetravel</h1>
+      <p class="desc">Eigene Logik für das Emetravel-Format. Getrennt von Viya und Exa Travel.</p>
+
+      <div class="card">
+        <div class="note">
+          Die Spalte <b>ROOMING</b> enthält nur in der ersten Zeile eines Zimmers einen Wert
+          (z. B. <b>TPL</b>, <b>TWIN</b>, <b>DBL + IFN</b>, <b>SGL</b>). Genau diese Zeile wird als Zimmer-Zeile genommen.
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="grid">
+          <div><label>Emetravel Rooming List</label><input id="emeFile" type="file" accept=".xlsx,.xls"></div>
+          <div><label>PMS Template</label><input value="Standard Template aktiv" disabled></div>
+          <div><label>Anreise</label><input id="emeArrival" type="date"></div>
+          <div><label>Abreise</label><input id="emeDeparture" type="date"></div>
+          <div>
+            <label>Single exportieren als</label>
+            <select id="emeSingleMode"><option value="DBL">DBL</option><option value="TWI">TWI</option></select>
+          </div>
+          <div>
+            <label>Payment</label>
+            <select id="emePayment"><option value="CA">CA</option><option value="CC">CC</option><option value="BT">BT</option></select>
+          </div>
+        </div>
+        <div style="height:12px"></div>
+        <div class="row">
+          <button id="emeAnalyzeBtn">Emetravel analysieren</button>
+          <button id="emeExportBtn" class="green">Mit Standard-Template exportieren</button>
+          <button id="emeExportBlankBtn" class="secondary">Ohne Template exportieren</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="stats">
+          <div class="stat"><b id="emeStatRooms">0</b><span class="small">erkannte Zimmer</span></div>
+          <div class="stat"><b id="emeStatDBL">0</b><span class="small">DBL</span></div>
+          <div class="stat"><b id="emeStatTWI">0</b><span class="small">TWI</span></div>
+          <div class="stat"><b id="emeStatTRI">0</b><span class="small">TRI</span></div>
+          <div class="stat"><b id="emeStatAdults">0</b><span class="small">Adults gesamt</span></div>
+        </div>
+        <div style="height:12px"></div>
+        <div class="ok" id="emeSummary">Noch keine Datei analysiert.</div>
+      </div>
+
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Line</th><th>Name</th><th>First Name</th><th>Arrival</th><th>Departure</th><th>Room Type</th><th>Adult</th><th>Payment</th><th>Specials</th><th>Quelle</th>
+              </tr>
+            </thead>
+            <tbody id="emeTbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card"><div id="emeLog" class="log"></div></div>
+    </section>
+
+    <section id="page-exa" class="page">
+      <h1>Exa Travel</h1>
+      <p class="desc">Eigene Logik für Exa Travel E-Mails. Nicht mit Viya oder Emetravel kombiniert.</p>
+
+      <div class="card">
+        <div class="note">
+          <b>Exa Travel arbeitet per E-Mail-Text.</b><br>
+          Bitte den Mailinhalt hier einfügen. Das Tool erkennt:
+          <b>PAX / LAST NAME / NAME / ROOM</b> und erstellt daraus <b>1 Zeile pro Zimmer</b> für den PMS-Import.
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="grid">
+          <div style="grid-column:1 / -1">
+            <label>Email-Inhalt / Roomingliste einfügen</label>
+            <textarea id="exaText" placeholder="Hier den Exa Travel E-Mail-Text einfügen..."></textarea>
+          </div>
+          <div><label>PMS Template</label><input value="Standard Template aktiv" disabled></div>
+          <div></div>
+          <div><label>Anreise</label><input id="exaArrival" type="date"></div>
+          <div><label>Abreise</label><input id="exaDeparture" type="date"></div>
+          <div>
+            <label>Single exportieren als</label>
+            <select id="exaSingleMode"><option value="DBL">DBL</option><option value="TWI">TWI</option></select>
+          </div>
+          <div>
+            <label>Payment</label>
+            <select id="exaPayment"><option value="CA">CA</option><option value="CC">CC</option><option value="BT">BT</option></select>
+          </div>
+        </div>
+        <div style="height:12px"></div>
+        <div class="row">
+          <button id="exaAnalyzeBtn">Exa Travel analysieren</button>
+          <button id="exaExportBtn" class="green">Mit Standard-Template exportieren</button>
+          <button id="exaExportBlankBtn" class="secondary">Ohne Template exportieren</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <span class="pill">DBL → DBL</span>
+        <span class="pill">TWIN → TWI</span>
+        <span class="pill">TPL / TPL C/MNR1 → TRI</span>
+        <span class="pill">SGL → frei wählbar</span>
+        <span class="pill">1 Zeile pro Zimmer</span>
+        <span class="pill">echtes Excel-Datum</span>
+      </div>
+
+      <div class="card">
+        <div class="stats">
+          <div class="stat"><b id="exaStatRooms">0</b><span class="small">erkannte Zimmer</span></div>
+          <div class="stat"><b id="exaStatDBL">0</b><span class="small">DBL</span></div>
+          <div class="stat"><b id="exaStatTWI">0</b><span class="small">TWI</span></div>
+          <div class="stat"><b id="exaStatTRI">0</b><span class="small">TRI</span></div>
+          <div class="stat"><b id="exaStatAdults">0</b><span class="small">Adults gesamt</span></div>
+        </div>
+        <div style="height:12px"></div>
+        <div class="ok" id="exaSummary">Noch kein Email-Text analysiert.</div>
+      </div>
+
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Line</th><th>Name</th><th>First Name</th><th>Arrival</th><th>Departure</th><th>Room Type</th><th>Adult</th><th>Payment</th><th>Specials</th><th>Quelle</th>
+              </tr>
+            </thead>
+            <tbody id="exaTbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card"><div id="exaLog" class="log"></div></div>
+    </section>
+
+    <section id="page-future" class="page">
+      <h1>Weitere Kunden</h1>
+      <p class="desc">Neue Formate können als eigene Seite ergänzt werden, ohne bestehende Module zu verändern.</p>
+      <div class="card">
+        <div class="coming">
+          Vorgesehen für weitere Formate wie:
+          <div style="height:10px"></div>
+          <span class="pill">Bey Tours</span>
+          <span class="pill">Europamundo</span>
+          <span class="pill">Europe Incoming</span>
+          <span class="pill">Eurorutas</span>
+          <span class="pill">Panavision</span>
+          <div style="height:16px"></div>
+          Jedes neue Format bekommt seine eigene Seite, eigene Erkennung und eigenen Export.
+        </div>
+      </div>
+    </section>
+
+  </main>
 </div>
 
 <script>
-let parsedRooms = [];
-let templateWorkbook = null;
+// GitHub / Web standard template for all modules.
+// Put your PMS template file in the SAME folder as this HTML on GitHub Pages,
+// or change the path below to your raw / hosted file URL.
+const DEFAULT_TEMPLATE_URL = "./Rooming_List_Final.xls";
 
-function log(m){
-  const el = document.getElementById("log");
-  el.textContent = new Date().toLocaleTimeString() + " " + m + "\n" + el.textContent;
+async function fetchDefaultTemplateWorkbook(){
+  const res = await fetch(DEFAULT_TEMPLATE_URL);
+  if(!res.ok) throw new Error("Template konnte nicht geladen werden: " + DEFAULT_TEMPLATE_URL);
+  const buf = await res.arrayBuffer();
+  return XLSX.read(buf,{type:"array", cellDates:true});
 }
+function q(id){ return document.getElementById(id); }
 function clean(v){ return String(v ?? "").replace(/\s+/g," ").trim(); }
-function joinParts(){ return [...arguments].map(clean).filter(Boolean).join(" "); }
-
 function formatDateISO(y,m,d){ return `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`; }
-function parseDateFromAny(text){
-  const s = clean(text);
-  if(!s) return "";
-  let m = s.match(/(\d{1,2})[./-](\d{1,2})[./-](\d{2,4})/);
-  if(m){ let day=+m[1], month=+m[2], year=+m[3]; if(year<100) year+=2000; return formatDateISO(year,month,day); }
-  m = s.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
-  if(m) return formatDateISO(+m[1],+m[2],+m[3]);
-  return "";
-}
-
 function formatDateEU(iso){
   const s = clean(iso);
   if(!s || !/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
   const [y,m,d] = s.split("-");
   return `${d}.${m}.${y.slice(2)}`;
 }
-function autoFillDatesFromHeader(rows){
-  let found=[];
-  for(let r=0;r<Math.min(rows.length,20);r++){
-    const row=rows[r]||[];
-    for(let c=0;c<row.length;c++){
-      const dt=parseDateFromAny(row[c]);
-      if(dt) found.push(dt);
-    }
+function parseDateFromAny(text){
+  const s = clean(text);
+  if(!s) return "";
+  let m = s.match(/(\d{1,2})[./-](\d{1,2})[./-](\d{2,4})/);
+  if(m){
+    let day=+m[1], month=+m[2], year=+m[3];
+    if(year<100) year += 2000;
+    return formatDateISO(year,month,day);
   }
-  found=[...new Set(found)].sort();
-  if(found[0] && !document.getElementById("arrival").value) document.getElementById("arrival").value=found[0];
-  if(found[1] && !document.getElementById("departure").value) document.getElementById("departure").value=found[1];
-}
-
-function isRoomStart(v){ return /^\d+\.Room$/i.test(clean(v)); }
-function isRoomType(v){ return /^(Double|Twin|Triple|Single)$/i.test(clean(v)); }
-
-function mapRoomType(v){
-  const s=clean(v).toLowerCase();
-  if(s==="double") return "DBL";
-  if(s==="twin") return "TWI";
-  if(s==="triple") return "TRI";
-  if(s==="single") return document.getElementById("singleMode").value;
+  m = s.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
+  if(m) return formatDateISO(+m[1],+m[2],+m[3]);
   return "";
 }
-function detectAdultBySourceType(sourceRoomType){
-  const s=clean(sourceRoomType).toLowerCase();
-  if(s==="double") return 2;
-  if(s==="twin") return 2;
-  if(s==="triple") return 3;
-  if(s==="single") return 1;
-  return "";
-}
-function detectSpecials(n,f){
-  const t=(n+" "+f).toLowerCase();
-  if(t.includes("guide")) return "Guide";
-  if(t.includes("driver")) return "Driver";
-  if(t.includes("leader")) return "Leader";
-  return "";
-}
-function rowHasGuest(row){ return clean(row[3]) || clean(row[4]) || clean(row[5]) || clean(row[6]); }
-function guestFromRow(row){
-  const fullSurname=joinParts(row[3],row[4]);
-  const fullFirst=joinParts(row[5],row[6]);
-  return { name: fullSurname, firstName: fullFirst, specials: detectSpecials(fullSurname,fullFirst) };
-}
-async function loadWorkbook(file){
-  const data=await file.arrayBuffer();
-  return XLSX.read(data,{type:"array"});
-}
-function updateStats(){
-  document.getElementById("statRooms").textContent=parsedRooms.length;
-  document.getElementById("statDBL").textContent=parsedRooms.filter(x=>x.roomType==="DBL").length;
-  document.getElementById("statTWI").textContent=parsedRooms.filter(x=>x.roomType==="TWI").length;
-  document.getElementById("statTRI").textContent=parsedRooms.filter(x=>x.roomType==="TRI").length;
-  document.getElementById("statAdults").textContent=parsedRooms.reduce((a,b)=>a+Number(b.adult||0),0);
-}
-function escapeHtml(v){
-  return String(v ?? "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
-}
-function renderRows(){
-  const tb=document.getElementById("tbody");
-  tb.innerHTML="";
-  const arrival=document.getElementById("arrival").value;
-  const departure=document.getElementById("departure").value;
-  const arrivalDisplay=formatDateEU(arrival);
-  const departureDisplay=formatDateEU(departure);
-  const payment=document.getElementById("payment").value;
-
-  parsedRooms.forEach((g,i)=>{
-    const tr=document.createElement("tr");
-    tr.innerHTML=`
-      <td>${i+1}</td>
-      <td>${escapeHtml(g.name)}</td>
-      <td>${escapeHtml(g.firstName)}</td>
-      <td>${escapeHtml(arrivalDisplay)}</td>
-      <td>${escapeHtml(departureDisplay)}</td>
-      <td>${escapeHtml(g.roomType)}</td>
-      <td>${escapeHtml(g.adult)}</td>
-      <td>${escapeHtml(payment)}</td>
-      <td>${escapeHtml(g.specials)}</td>`;
-    tb.appendChild(tr);
-  });
-
-  updateStats();
-  document.getElementById("summary").innerHTML=`<b>${parsedRooms.length}</b> Zimmer erkannt | Arrival: ${clean(arrivalDisplay)} | Departure: ${clean(departureDisplay)}`;
-}
-
-async function analyzeViya(){
-  const file=document.getElementById("viyaFile").files[0];
-  if(!file){ alert("Bitte Datei wählen"); return; }
-
-  const wb=await loadWorkbook(file);
-  const ws=wb.Sheets[wb.SheetNames[0]];
-  const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:""});
-  autoFillDatesFromHeader(rows);
-
-  parsedRooms=[];
-  let startRow = rows.findIndex(r => clean((r||[])[0]) === "No");
-  if(startRow < 0){
-    log("Header 'No' nicht gefunden.");
-    renderRows();
-    return;
-  }
-
-  for(let i=startRow+1; i<rows.length; i++){
-    const row = rows[i] || [];
-    const colA = clean(row[0]);
-
-    if(!isRoomStart(colA)) continue;
-
-    // name always from the room header row itself
-    if(!rowHasGuest(row)) continue;
-    const guest = guestFromRow(row);
-
-    // find room type in following lines until next x.Room
-    let sourceRoomType = "";
-    for(let j=i+1; j<rows.length; j++){
-      const nextRow = rows[j] || [];
-      const a = clean(nextRow[0]);
-
-      if(isRoomStart(a)) break;
-      if(isRoomType(a)){ sourceRoomType = a; break; }
-    }
-
-    // fallback only if really missing
-    if(!sourceRoomType && isRoomType(row[9])) sourceRoomType = clean(row[9]);
-
-    if(!sourceRoomType){
-      log("Room Type nicht gefunden für " + colA + " / " + guest.name + " " + guest.firstName);
-      continue;
-    }
-
-    parsedRooms.push({
-      name: guest.name,
-      firstName: guest.firstName,
-      roomType: mapRoomType(sourceRoomType),
-      adult: detectAdultBySourceType(sourceRoomType),
-      specials: guest.specials
-    });
-  }
-
-  renderRows();
-  log("Analyse fertig: "+parsedRooms.length+" Zimmer");
-}
-
-async function maybeLoadTemplate(){
-  const file=document.getElementById("templateFile").files[0];
-  if(!file){ templateWorkbook=null; return; }
-  templateWorkbook=await loadWorkbook(file);
-  log("Template geladen: "+file.name);
-}
-
-function setCell(ws, addr, value, type){
-  ws[addr]={ t:type, v:value };
-}
-
 function isoToExcelSerial(iso){
   const s = clean(iso);
   if(!s || !/^\d{4}-\d{2}-\d{2}$/.test(s)) return null;
@@ -330,20 +339,19 @@ function setDateCell(ws, addr, iso){
     ws[addr] = { t:"n", v: serial, z:"dd.mm.yy" };
   }
 }
-function exportRows(){
-  return parsedRooms.map((g,i)=>({
-    line:i+1,
-    name:g.name,
-    firstName:g.firstName,
-    arrival:document.getElementById("arrival").value,
-    departure:document.getElementById("departure").value,
-    roomType:g.roomType,
-    payment:document.getElementById("payment").value,
-    adult:g.adult,
-    specials:g.specials
-  }));
+function setCell(ws, addr, value, type){ ws[addr] = { t:type, v:value }; }
+async function loadWorkbook(file){
+  const data = await file.arrayBuffer();
+  return XLSX.read(data,{type:"array", cellDates:true});
 }
-function writeIntoSheet(ws, rows){
+function escapeHtml(v){
+  return String(v ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;");
+}
+function writePmsSheet(ws, rows){
   setCell(ws,"A1","Line","s");
   setCell(ws,"B1","Name","s");
   setCell(ws,"C1","First Name","s");
@@ -353,7 +361,6 @@ function writeIntoSheet(ws, rows){
   setCell(ws,"H1","Payment Method","s");
   setCell(ws,"J1","Adult","s");
   setCell(ws,"O1","Specials","s");
-
   rows.forEach((row, idx)=>{
     const r=idx+2;
     setCell(ws,"A"+r,row.line,"n");
@@ -366,35 +373,444 @@ function writeIntoSheet(ws, rows){
     setCell(ws,"J"+r,Number(row.adult||0),"n");
     if(row.specials) setCell(ws,"O"+r,row.specials,"s");
   });
-
   ws["!ref"]="A1:O"+(rows.length+2);
 }
-function exportExcel(useTemplate){
-  if(!parsedRooms.length){ alert("Bitte zuerst analysieren"); return; }
+document.querySelectorAll('.navbtn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.navbtn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    q(btn.dataset.page).classList.add('active');
+  });
+});
 
-  const rows=exportRows();
-  let wb, ws;
-
-  if(useTemplate && templateWorkbook){
-    wb=templateWorkbook;
-    const firstSheet=wb.SheetNames[0];
-    ws=wb.Sheets[firstSheet];
-    writeIntoSheet(ws, rows);
-    XLSX.writeFile(wb, "Viya_PMS_Final_Template.xlsx");
-  } else {
-    wb=XLSX.utils.book_new();
-    ws={};
-    writeIntoSheet(ws, rows);
-    XLSX.utils.book_append_sheet(wb, ws, "Rooming List");
-    XLSX.writeFile(wb, "Viya_PMS_Final.xlsx");
+/* -------- VIYA -------- */
+let viyaParsedRooms = [], viyaTemplateWorkbook = null;
+function viyaLog(m){ q("viyaLog").textContent = new Date().toLocaleTimeString()+" "+m+"\n"+q("viyaLog").textContent; }
+function viyaIsRoomStart(v){ return /^\d+\.Room$/i.test(clean(v)); }
+function viyaIsRoomType(v){ return /^(Double|Twin|Triple|Single)$/i.test(clean(v)); }
+function viyaMapRoomType(v){
+  const s=clean(v).toLowerCase();
+  if(s==="double") return "DBL";
+  if(s==="twin") return "TWI";
+  if(s==="triple") return "TRI";
+  if(s==="single") return q("viyaSingleMode").value;
+  return "";
+}
+function viyaAdult(v){
+  const s=clean(v).toLowerCase();
+  if(s==="double") return 2;
+  if(s==="twin") return 2;
+  if(s==="triple") return 3;
+  if(s==="single") return 1;
+  return "";
+}
+function viyaDetectSpecials(n,f){
+  const t=(n+" "+f).toLowerCase();
+  if(t.includes("guide")) return "Guide";
+  if(t.includes("driver")) return "Driver";
+  if(t.includes("leader")) return "Leader";
+  return "";
+}
+function viyaRowHasGuest(row){ return clean(row[3]) || clean(row[4]) || clean(row[5]) || clean(row[6]); }
+function viyaGuestFromRow(row){
+  const fullSurname=[clean(row[3]),clean(row[4])].filter(Boolean).join(" ");
+  const fullFirst=[clean(row[5]),clean(row[6])].filter(Boolean).join(" ");
+  return { name: fullSurname, firstName: fullFirst, specials: viyaDetectSpecials(fullSurname,fullFirst) };
+}
+function viyaAutoDates(rows){
+  let found=[];
+  for(let r=0;r<Math.min(rows.length,20);r++){
+    const row=rows[r]||[];
+    for(let c=0;c<row.length;c++){
+      const dt=parseDateFromAny(row[c]);
+      if(dt) found.push(dt);
+    }
   }
-  log("Export erstellt: "+rows.length+" Zeilen");
+  found=[...new Set(found)].sort();
+  if(found[0] && !q("viyaArrival").value) q("viyaArrival").value=found[0];
+  if(found[1] && !q("viyaDeparture").value) q("viyaDeparture").value=found[1];
+}
+function viyaRender(){
+  const tb=q("viyaTbody"); tb.innerHTML="";
+  const arrivalDisplay=formatDateEU(q("viyaArrival").value);
+  const departureDisplay=formatDateEU(q("viyaDeparture").value);
+  const payment=q("viyaPayment").value;
+  viyaParsedRooms.forEach((g,i)=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td>${i+1}</td><td>${escapeHtml(g.name)}</td><td>${escapeHtml(g.firstName)}</td><td>${escapeHtml(arrivalDisplay)}</td><td>${escapeHtml(departureDisplay)}</td><td>${escapeHtml(g.roomType)}</td><td>${escapeHtml(g.adult)}</td><td>${escapeHtml(payment)}</td><td>${escapeHtml(g.specials)}</td>`;
+    tb.appendChild(tr);
+  });
+  q("viyaStatRooms").textContent=viyaParsedRooms.length;
+  q("viyaStatDBL").textContent=viyaParsedRooms.filter(x=>x.roomType==="DBL").length;
+  q("viyaStatTWI").textContent=viyaParsedRooms.filter(x=>x.roomType==="TWI").length;
+  q("viyaStatTRI").textContent=viyaParsedRooms.filter(x=>x.roomType==="TRI").length;
+  q("viyaStatAdults").textContent=viyaParsedRooms.reduce((a,b)=>a+Number(b.adult||0),0);
+  q("viyaSummary").innerHTML=`<b>${viyaParsedRooms.length}</b> Zimmer erkannt | Arrival: ${clean(arrivalDisplay)} | Departure: ${clean(departureDisplay)}`;
+}
+async function viyaAnalyze(){
+  const file=q("viyaFile").files[0];
+  if(!file){ alert("Bitte Viya-Datei wählen"); return; }
+  const wb=await loadWorkbook(file);
+  const ws=wb.Sheets[wb.SheetNames[0]];
+  const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:""});
+  viyaAutoDates(rows);
+  viyaParsedRooms=[];
+  let startRow = rows.findIndex(r => clean((r||[])[0]) === "No");
+  if(startRow < 0){ viyaLog("Header 'No' nicht gefunden."); viyaRender(); return; }
+  for(let i=startRow+1; i<rows.length; i++){
+    const row = rows[i] || [];
+    const colA = clean(row[0]);
+    if(!viyaIsRoomStart(colA)) continue;
+    if(!viyaRowHasGuest(row)) continue;
+    const guest = viyaGuestFromRow(row);
+    let sourceRoomType = "";
+    for(let j=i+1; j<rows.length; j++){
+      const a = clean((rows[j]||[])[0]);
+      if(viyaIsRoomStart(a)) break;
+      if(viyaIsRoomType(a)){ sourceRoomType = a; break; }
+    }
+    if(!sourceRoomType && viyaIsRoomType((row||[])[9])) sourceRoomType = clean(row[9]);
+    if(!sourceRoomType){ viyaLog("Room Type nicht gefunden für "+colA); continue; }
+    viyaParsedRooms.push({name: guest.name, firstName: guest.firstName, roomType: viyaMapRoomType(sourceRoomType), adult: viyaAdult(sourceRoomType), specials: guest.specials});
+  }
+  viyaRender();
+  viyaLog("Analyse fertig: "+viyaParsedRooms.length+" Zimmer");
+}
+async function viyaMaybeLoadTemplate(){
+  if(viyaTemplateWorkbook) return;
+  viyaTemplateWorkbook = await fetchDefaultTemplateWorkbook();
+  viyaLog("Standard Template geladen: " + DEFAULT_TEMPLATE_URL);
+}
+function viyaExportRows(){
+  return viyaParsedRooms.map((g,i)=>({line:i+1,name:g.name,firstName:g.firstName,arrival:q("viyaArrival").value,departure:q("viyaDeparture").value,roomType:g.roomType,payment:q("viyaPayment").value,adult:g.adult,specials:g.specials}));
+}
+function viyaExport(useTemplate){
+  if(!viyaParsedRooms.length){ alert("Bitte zuerst Viya analysieren"); return; }
+  const rows=viyaExportRows();
+  let wb, ws;
+  if(useTemplate && viyaTemplateWorkbook){
+    wb=viyaTemplateWorkbook; ws=wb.Sheets[wb.SheetNames[0]];
+    writePmsSheet(ws, rows); XLSX.writeFile(wb, "Viya_PMS_Hub_Template.xlsx");
+  } else {
+    wb=XLSX.utils.book_new(); ws={};
+    writePmsSheet(ws, rows); XLSX.utils.book_append_sheet(wb, ws, "Rooming List"); XLSX.writeFile(wb, "Viya_PMS_Hub.xlsx");
+  }
+  viyaLog("Export erstellt: "+rows.length+" Zeilen");
 }
 
-document.getElementById("analyzeBtn").onclick=analyzeViya;
-document.getElementById("exportBtn").onclick=async ()=>{ await maybeLoadTemplate(); exportExcel(true); };
-document.getElementById("exportBlankBtn").onclick=()=>exportExcel(false);
-log("Tool geladen");
+/* -------- EMETRAVEL -------- */
+let emeParsedRooms = [], emeTemplateWorkbook = null;
+function emeLog(m){ q("emeLog").textContent = new Date().toLocaleTimeString()+" "+m+"\n"+q("emeLog").textContent; }
+function emeMapRoomType(rooming){
+  const s = clean(rooming).toUpperCase();
+  if(s.includes("TPL")) return "TRI";
+  if(s.includes("TWIN")) return "TWI";
+  if(s.includes("DBL")) return "DBL";
+  if(s === "SGL") return q("emeSingleMode").value;
+  return "";
+}
+function emeAdult(rooming){
+  const s = clean(rooming).toUpperCase();
+  if(s.includes("TPL")) return 3;
+  if(s.includes("TWIN")) return 2;
+  if(s.includes("DBL")) return 2;
+  if(s === "SGL") return 1;
+  return "";
+}
+function emeSplitName(fullName){
+  const name = clean(fullName).replace(/\s*\(MENOR\)\s*/gi, "").trim();
+  if(!name) return { lastName:"", firstName:"", specials:"" };
+  const upper = name.toUpperCase();
+  if(upper === "DRIVER") return { lastName:"Driver", firstName:"", specials:"Driver" };
+  if(upper.includes("TOUR LIDER")) return { lastName:"Guide", firstName:"", specials:"Guide" };
+  const parts = name.split(/\s+/).filter(Boolean);
+  if(parts.length === 1) return { lastName:parts[0], firstName:"", specials:"" };
+  if(parts.length === 2) return { lastName:parts[0], firstName:parts[1], specials:"" };
+  if(parts.length === 3) return { lastName:parts[0]+" "+parts[1], firstName:parts[2], specials:"" };
+  return { lastName:parts.slice(0,2).join(" "), firstName:parts.slice(2).join(" "), specials:"" };
+}
+function emeFindHeaderRow(rows){
+  for(let i=0;i<Math.min(rows.length,15);i++){
+    const a = clean((rows[i]||[])[0]).toUpperCase();
+    const b = clean((rows[i]||[])[1]).toUpperCase();
+    const c = clean((rows[i]||[])[2]).toUpperCase();
+    if(a==="NO" && b==="NOMBRE" && c==="ROOMING") return i;
+  }
+  return -1;
+}
+function emeRender(){
+  const tb=q("emeTbody"); tb.innerHTML="";
+  const arrivalDisplay=formatDateEU(q("emeArrival").value);
+  const departureDisplay=formatDateEU(q("emeDeparture").value);
+  const payment=q("emePayment").value;
+  emeParsedRooms.forEach((g,i)=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td>${i+1}</td><td><input value="${escapeHtml(g.name)}" data-i="${i}" data-k="name"></td><td><input value="${escapeHtml(g.firstName)}" data-i="${i}" data-k="firstName"></td><td>${escapeHtml(arrivalDisplay)}</td><td>${escapeHtml(departureDisplay)}</td><td><select data-i="${i}" data-k="roomType"><option value="DBL" ${g.roomType==="DBL"?"selected":""}>DBL</option><option value="TWI" ${g.roomType==="TWI"?"selected":""}>TWI</option><option value="TRI" ${g.roomType==="TRI"?"selected":""}>TRI</option></select></td><td><input value="${escapeHtml(g.adult)}" data-i="${i}" data-k="adult"></td><td>${escapeHtml(payment)}</td><td><input value="${escapeHtml(g.specials)}" data-i="${i}" data-k="specials"></td><td>${escapeHtml(g.source)}</td>`;
+    tb.appendChild(tr);
+  });
+  tb.querySelectorAll('input[data-i], select[data-i]').forEach(el=>{
+    el.addEventListener('input', e=>{
+      const i=Number(e.target.dataset.i), k=e.target.dataset.k;
+      emeParsedRooms[i][k]=e.target.value; emeUpdateStats();
+    });
+  });
+  emeUpdateStats();
+  q("emeSummary").innerHTML=`<b>${emeParsedRooms.length}</b> Zimmer erkannt | Arrival: ${clean(arrivalDisplay)} | Departure: ${clean(departureDisplay)}`;
+}
+function emeUpdateStats(){
+  q("emeStatRooms").textContent=emeParsedRooms.length;
+  q("emeStatDBL").textContent=emeParsedRooms.filter(x=>x.roomType==="DBL").length;
+  q("emeStatTWI").textContent=emeParsedRooms.filter(x=>x.roomType==="TWI").length;
+  q("emeStatTRI").textContent=emeParsedRooms.filter(x=>x.roomType==="TRI").length;
+  q("emeStatAdults").textContent=emeParsedRooms.reduce((a,b)=>a+Number(b.adult||0),0);
+}
+async function emeAnalyze(){
+  const file=q("emeFile").files[0];
+  if(!file){ alert("Bitte Emetravel-Datei wählen"); return; }
+  const wb=await loadWorkbook(file);
+  const ws=wb.Sheets[wb.SheetNames[0]];
+  const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:""});
+  emeParsedRooms=[];
+  const headerRow=emeFindHeaderRow(rows);
+  if(headerRow<0){ emeLog("Header NO / NOMBRE / ROOMING nicht gefunden."); emeRender(); return; }
+  for(let i=headerRow+1;i<rows.length;i++){
+    const row=rows[i]||[];
+    const no=clean(row[0]), nombre=row[1], rooming=clean(row[2]);
+    if(!no && !clean(nombre) && !rooming) continue;
+    if(!rooming) continue;
+    const split=emeSplitName(nombre);
+    emeParsedRooms.push({name:split.lastName, firstName:split.firstName, roomType:emeMapRoomType(rooming), adult:emeAdult(rooming), specials:split.specials || "", source:rooming});
+  }
+  emeRender();
+  emeLog("Analyse fertig: "+emeParsedRooms.length+" Zimmer");
+}
+async function emeMaybeLoadTemplate(){
+  if(emeTemplateWorkbook) return;
+  emeTemplateWorkbook = await fetchDefaultTemplateWorkbook();
+  emeLog("Standard Template geladen: " + DEFAULT_TEMPLATE_URL);
+}
+function emeExportRows(){
+  return emeParsedRooms.map((g,i)=>({line:i+1,name:g.name,firstName:g.firstName,arrival:q("emeArrival").value,departure:q("emeDeparture").value,roomType:g.roomType,payment:q("emePayment").value,adult:g.adult,specials:g.specials}));
+}
+function emeExport(useTemplate){
+  if(!emeParsedRooms.length){ alert("Bitte zuerst Emetravel analysieren"); return; }
+  const rows=emeExportRows();
+  let wb, ws;
+  if(useTemplate && emeTemplateWorkbook){
+    wb=emeTemplateWorkbook; ws=wb.Sheets[wb.SheetNames[0]];
+    writePmsSheet(ws, rows); XLSX.writeFile(wb, "Emetravel_PMS_Hub_Template.xlsx");
+  } else {
+    wb=XLSX.utils.book_new(); ws={};
+    writePmsSheet(ws, rows); XLSX.utils.book_append_sheet(wb, ws, "Rooming List"); XLSX.writeFile(wb, "Emetravel_PMS_Hub.xlsx");
+  }
+  emeLog("Export erstellt: "+rows.length+" Zeilen");
+}
+
+/* -------- EXA TRAVEL -------- */
+let exaParsedRooms = [], exaTemplateWorkbook = null;
+function exaLog(m){ q("exaLog").textContent = new Date().toLocaleTimeString()+" "+m+"\n"+q("exaLog").textContent; }
+function exaMapRoomType(room){
+  const s = clean(room).toUpperCase();
+  if(s.includes("TWIN")) return "TWI";
+  if(s.includes("TPL")) return "TRI";
+  if(s.includes("DBL")) return "DBL";
+  if(s.includes("SGL")) return q("exaSingleMode").value;
+  return "";
+}
+function exaAdult(room){
+  const s = clean(room).toUpperCase();
+  if(s.includes("TWIN")) return 2;
+  if(s.includes("TPL")) return 3;
+  if(s.includes("DBL")) return 2;
+  if(s.includes("SGL")) return 1;
+  return "";
+}
+function exaSpecials(lastName, firstName){
+  const t = (clean(lastName)+" "+clean(firstName)).toUpperCase();
+  if(t.includes("GUIDE")) return "Guide";
+  if(t.includes("DRIVER")) return "Driver";
+  return "";
+}
+function exaRender(){
+  const tb=q("exaTbody"); tb.innerHTML="";
+  const arrivalDisplay=formatDateEU(q("exaArrival").value);
+  const departureDisplay=formatDateEU(q("exaDeparture").value);
+  const payment=q("exaPayment").value;
+  exaParsedRooms.forEach((g,i)=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td>${i+1}</td><td><input value="${escapeHtml(g.name)}" data-i="${i}" data-k="name"></td><td><input value="${escapeHtml(g.firstName)}" data-i="${i}" data-k="firstName"></td><td>${escapeHtml(arrivalDisplay)}</td><td>${escapeHtml(departureDisplay)}</td><td><select data-i="${i}" data-k="roomType"><option value="DBL" ${g.roomType==="DBL"?"selected":""}>DBL</option><option value="TWI" ${g.roomType==="TWI"?"selected":""}>TWI</option><option value="TRI" ${g.roomType==="TRI"?"selected":""}>TRI</option></select></td><td><input value="${escapeHtml(g.adult)}" data-i="${i}" data-k="adult"></td><td>${escapeHtml(payment)}</td><td><input value="${escapeHtml(g.specials)}" data-i="${i}" data-k="specials"></td><td>${escapeHtml(g.source)}</td>`;
+    tb.appendChild(tr);
+  });
+  tb.querySelectorAll('input[data-i], select[data-i]').forEach(el=>{
+    el.addEventListener('input', e=>{
+      const i=Number(e.target.dataset.i), k=e.target.dataset.k;
+      exaParsedRooms[i][k]=e.target.value; exaUpdateStats();
+    });
+  });
+  exaUpdateStats();
+  q("exaSummary").innerHTML=`<b>${exaParsedRooms.length}</b> Zimmer erkannt | Arrival: ${clean(arrivalDisplay)} | Departure: ${clean(departureDisplay)}`;
+}
+function exaUpdateStats(){
+  q("exaStatRooms").textContent=exaParsedRooms.length;
+  q("exaStatDBL").textContent=exaParsedRooms.filter(x=>x.roomType==="DBL").length;
+  q("exaStatTWI").textContent=exaParsedRooms.filter(x=>x.roomType==="TWI").length;
+  q("exaStatTRI").textContent=exaParsedRooms.filter(x=>x.roomType==="TRI").length;
+  q("exaStatAdults").textContent=exaParsedRooms.reduce((a,b)=>a+Number(b.adult||0),0);
+}
+function exaAutoDates(lines){
+  let found=[];
+  lines.forEach(line=>{
+    const m = clean(line).match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/g);
+    if(m){
+      m.forEach(x=>{
+        const dt=parseDateFromAny(x);
+        if(dt) found.push(dt);
+      });
+    }
+  });
+  found=[...new Set(found)].sort();
+  if(found[0] && !q("exaArrival").value) q("exaArrival").value=found[0];
+  if(found[1] && !q("exaDeparture").value) q("exaDeparture").value=found[1];
+}
+function exaParseFlexibleLine(line){
+  // Keep empties when tabs exist; fall back to multi-space parsing.
+  if(line.includes('\t')){
+    return line.split('\t').map(x=>clean(x));
+  }
+  const cols = line.split(/\s{2,}/).map(x=>clean(x));
+  return cols;
+}
+function exaFindPaxHeader(lines){
+  return lines.findIndex(l => {
+    const s = clean(l).toUpperCase().replace(/\s+/g,' ');
+    return s.includes('PAX') && s.includes('LAST NAME') && s.includes('ADT/CHD') && s.includes('ROOM');
+  });
+}
+function exaNormalizeHeader(line){
+  return clean(line).toUpperCase().replace(/\s+/g,' ');
+}
+function exaLooksLikePassengerLine(line){
+  return /^\s*\d+\s+/.test(line) || /^\d+\t/.test(line);
+}
+function exaExtractRoomToken(line){
+  const u = clean(line).toUpperCase();
+  const patterns = [
+    /TPL\s*C\/MNR\d+/,
+    /\bTPL\b/,
+    /\bTWIN\b/,
+    /\bDBL(?:\s*\+\s*IFN)?\b/,
+    /\bSGL\b/
+  ];
+  for(const p of patterns){
+    const m = u.match(p);
+    if(m) return m[0];
+  }
+  return "";
+}
+async function exaAnalyze(){
+  const text = q("exaText").value;
+  if(!clean(text)){ alert("Bitte den Exa Travel E-Mail-Text einfügen"); return; }
+
+  const lines = text.split(/\r?\n/).map(x=>x.replace(/\r/g,'')).filter(x=>clean(x));
+  exaAutoDates(lines);
+  exaParsedRooms = [];
+
+  const headerIdx = exaFindPaxHeader(lines);
+  if(headerIdx < 0){ exaLog("PAX Header nicht gefunden."); exaRender(); return; }
+
+  for(let i=headerIdx+1;i<lines.length;i++){
+    const line = lines[i];
+    const norm = exaNormalizeHeader(line);
+
+    if(norm.startsWith('NIGHTS DATE CITY')) continue;
+    if(norm.startsWith('PAX LAST NAME NAME')) continue;
+    if(!exaLooksLikePassengerLine(line)) continue;
+
+    const cols = exaParseFlexibleLine(line);
+    const paxNo = clean(cols[0] || "");
+    if(!/^\d+$/.test(paxNo)) continue;
+
+    let lastName = clean(cols[1] || "");
+    let firstName = clean(cols[2] || "");
+
+    // Extract room token from the whole line, not fixed column position.
+    const room = exaExtractRoomToken(line);
+    if(!room) continue;
+
+    const roomType = exaMapRoomType(room);
+    if(!roomType) continue;
+
+    const lineUpper = clean(line).toUpperCase();
+
+    let outLast = lastName;
+    let outFirst = firstName;
+    let outSpecials = "";
+
+    // Driver / Guide may be spread across sparse columns or only appear once in the line.
+    if(/\bGUIDE\b/.test(lineUpper)){
+      outLast = 'Guide';
+      outFirst = '';
+      outSpecials = 'Guide';
+    } else if(/\bDRIVER\b/.test(lineUpper)){
+      outLast = 'Driver';
+      outFirst = '';
+      outSpecials = 'Driver';
+    } else {
+      outSpecials = exaSpecials(outLast, outFirst);
+    }
+
+    exaParsedRooms.push({
+      name: outLast,
+      firstName: outFirst,
+      roomType: roomType,
+      adult: exaAdult(room),
+      specials: outSpecials,
+      source: room
+    });
+  }
+
+  exaRender();
+  exaLog("Analyse fertig: "+exaParsedRooms.length+" Zimmer");
+}
+async function exaMaybeLoadTemplate(){
+  if(exaTemplateWorkbook) return;
+  exaTemplateWorkbook = await fetchDefaultTemplateWorkbook();
+  exaLog("Standard Template geladen: " + DEFAULT_TEMPLATE_URL);
+}
+function exaExportRows(){
+  return exaParsedRooms.map((g,i)=>({line:i+1,name:g.name,firstName:g.firstName,arrival:q("exaArrival").value,departure:q("exaDeparture").value,roomType:g.roomType,payment:q("exaPayment").value,adult:g.adult,specials:g.specials}));
+}
+function exaExport(useTemplate){
+  if(!exaParsedRooms.length){ alert("Bitte zuerst Exa Travel analysieren"); return; }
+  const rows=exaExportRows();
+  let wb, ws;
+  if(useTemplate && exaTemplateWorkbook){
+    wb=exaTemplateWorkbook; ws=wb.Sheets[wb.SheetNames[0]];
+    writePmsSheet(ws, rows); XLSX.writeFile(wb, "ExaTravel_PMS_Hub_Template.xlsx");
+  } else {
+    wb=XLSX.utils.book_new(); ws={};
+    writePmsSheet(ws, rows); XLSX.utils.book_append_sheet(wb, ws, "Rooming List"); XLSX.writeFile(wb, "ExaTravel_PMS_Hub.xlsx");
+  }
+  exaLog("Export erstellt: "+rows.length+" Zeilen");
+}
+
+/* bindings */
+q("viyaAnalyzeBtn").onclick=viyaAnalyze;
+q("viyaExportBtn").onclick=async ()=>{ await viyaMaybeLoadTemplate(); viyaExport(true); };
+q("viyaExportBlankBtn").onclick=()=>viyaExport(false);
+
+q("emeAnalyzeBtn").onclick=emeAnalyze;
+q("emeExportBtn").onclick=async ()=>{ await emeMaybeLoadTemplate(); emeExport(true); };
+q("emeExportBlankBtn").onclick=()=>emeExport(false);
+
+q("exaAnalyzeBtn").onclick=exaAnalyze;
+q("exaExportBtn").onclick=async ()=>{ await exaMaybeLoadTemplate(); exaExport(true); };
+q("exaExportBlankBtn").onclick=()=>exaExport(false);
+
+viyaLog("Viya-Modul geladen");
+emeLog("Emetravel-Modul geladen");
+exaLog("Exa-Modul geladen");
 </script>
 </body>
 </html>
