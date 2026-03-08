@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Viya PMS Export Builder Final</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+body{font-family:Arial,Helvetica,sans-serif;background:#f7f8fb;color:#1f2937;margin:0}
+.wrap{max-width:1220px;margin:0 auto;padding:24px}
+h1{margin:0 0 8px;font-size:28px}
+.sub{color:#6b7280;margin:0 0 18px}
+.card{background:#fff;border:1px solid #dbe2ea;border-radius:16px;padding:16px;box-shadow:0 8px 24px rgba(15,23,42,.06);margin-bottom:16px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+label{display:block;font-size:13px;color:#6b7280;margin-bottom:6px}
+input,select,button{width:100%;padding:10px 12px;border:1px solid #dbe2ea;border-radius:12px;font-size:14px;box-sizing:border-box}
+button{cursor:pointer;font-weight:700;background:#111827;color:#fff}
+button.secondary{background:#fff;color:#111827}
+button.green{background:#065f46}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.row button{width:auto}
+table{width:100%;border-collapse:collapse}
+th,td{padding:8px 10px;border-bottom:1px solid #eef2f7;text-align:left;font-size:14px}
+th{background:#f8fafc;position:sticky;top:0}
+th:nth-child(1), td:nth-child(1){width:60px}
+th:nth-child(6), td:nth-child(6){width:170px}
+.table-wrap{max-height:560px;overflow:auto;border:1px solid #dbe2ea;border-radius:14px}
+.note{background:#fffbeb;border:1px solid #fde68a;color:#92400e;padding:10px 12px;border-radius:12px;font-size:13px}
+.ok{background:#ecfdf5;border:1px solid #a7f3d0;color:#065f46;padding:10px 12px;border-radius:12px;font-size:13px}
+.log{white-space:pre-wrap;background:#0f172a;color:#e2e8f0;padding:12px;border-radius:12px;font-family:ui-monospace,monospace;font-size:12px;min-height:90px}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.stat{background:#f8fafc;border:1px solid #dbe2ea;border-radius:14px;padding:12px}
+.stat b{display:block;font-size:22px}
+.small{font-size:12px;color:#6b7280}
+@media (max-width:980px){.grid,.stats{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Viya PMS Export Builder Final</h1>
+  <p class="sub">Analysiert die Viya-Liste blockweise: <b>1.Room</b> Zeile liefert den Namen, die nächste passende Type-Zeile liefert den Room Type. Exportiert genau <b>1 Zeile pro Zimmer</b>.</p>
+
+  <div class="card">
+    <div class="note">
+      <b>Fixe PMS-Codes:</b> Double = <b>DBL</b>, Twin = <b>TWI</b>, Triple = <b>TRI</b>.<br>
+      <b>Leselogik:</b> Pro Zimmer wird die Zeile <b>1.Room / 2.Room / 3.Room ...</b> als Hauptzeile gelesen.  
+      Der <b>erste Name</b> dieser Room-Zeile wird importiert.  
+      Der <b>Room Type</b> wird aus der nächsten Zeile mit <b>Double / Twin / Triple / Single</b> gelesen.  
+      Zusätzliche Gastzeilen werden ignoriert.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="grid">
+      <div>
+        <label>Viya Rooming List</label>
+        <input id="viyaFile" type="file" accept=".xlsx,.xls">
+      </div>
+      <div>
+        <label>PMS Template (optional)</label>
+        <input id="templateFile" type="file" accept=".xlsx,.xls">
+      </div>
+      <div>
+        <label>Anreise</label>
+        <input id="arrival" type="date">
+      </div>
+      <div>
+        <label>Abreise</label>
+        <input id="departure" type="date">
+      </div>
+      <div>
+        <label>Single exportieren als</label>
+        <select id="singleMode">
+          <option value="DBL">DBL</option>
+          <option value="TWI">TWI</option>
+        </select>
+      </div>
+      <div>
+        <label>Payment</label>
+        <select id="payment">
+          <option value="CA">CA</option>
+          <option value="CC">CC</option>
+          <option value="BT">BT</option>
+        </select>
+      </div>
+    </div>
+    <div style="height:12px"></div>
+    <div class="row">
+      <button id="analyzeBtn">Viya analysieren</button>
+      <button id="exportBtn" class="green">Mit Template exportieren</button>
+      <button id="exportBlankBtn" class="secondary">Ohne Template exportieren</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="stats">
+      <div class="stat"><b id="statRooms">0</b><span class="small">erkannte Zimmer</span></div>
+      <div class="stat"><b id="statDBL">0</b><span class="small">DBL</span></div>
+      <div class="stat"><b id="statTWI">0</b><span class="small">TWI</span></div>
+      <div class="stat"><b id="statTRI">0</b><span class="small">TRI</span></div>
+      <div class="stat"><b id="statAdults">0</b><span class="small">Adults gesamt</span></div>
+    </div>
+    <div style="height:12px"></div>
+    <div class="ok" id="summary">Noch keine Datei analysiert.</div>
+  </div>
+
+  <div class="card">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Line</th>
+            <th>Name</th>
+            <th>First Name</th>
+            <th>Arrival</th>
+            <th>Departure</th>
+            <th>Room Type</th>
+            <th>Adult</th>
+            <th>Payment</th>
+            <th>Specials</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div id="log" class="log"></div>
+  </div>
+</div>
+
+<script>
+let parsedRooms = [];
+let templateWorkbook = null;
+
+function log(m){
+  const el = document.getElementById("log");
+  el.textContent = new Date().toLocaleTimeString() + " " + m + "\n" + el.textContent;
+}
+function clean(v){ return String(v ?? "").replace(/\s+/g," ").trim(); }
+function joinParts(){ return [...arguments].map(clean).filter(Boolean).join(" "); }
+
+function formatDateISO(y,m,d){ return `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`; }
+function parseDateFromAny(text){
+  const s = clean(text);
+  if(!s) return "";
+  let m = s.match(/(\d{1,2})[./-](\d{1,2})[./-](\d{2,4})/);
+  if(m){ let day=+m[1], month=+m[2], year=+m[3]; if(year<100) year+=2000; return formatDateISO(year,month,day); }
+  m = s.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
+  if(m) return formatDateISO(+m[1],+m[2],+m[3]);
+  return "";
+}
+
+function formatDateEU(iso){
+  const s = clean(iso);
+  if(!s || !/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+  const [y,m,d] = s.split("-");
+  return `${d}.${m}.${y.slice(2)}`;
+}
+function autoFillDatesFromHeader(rows){
+  let found=[];
+  for(let r=0;r<Math.min(rows.length,20);r++){
+    const row=rows[r]||[];
+    for(let c=0;c<row.length;c++){
+      const dt=parseDateFromAny(row[c]);
+      if(dt) found.push(dt);
+    }
+  }
+  found=[...new Set(found)].sort();
+  if(found[0] && !document.getElementById("arrival").value) document.getElementById("arrival").value=found[0];
+  if(found[1] && !document.getElementById("departure").value) document.getElementById("departure").value=found[1];
+}
+
+function isRoomStart(v){ return /^\d+\.Room$/i.test(clean(v)); }
+function isRoomType(v){ return /^(Double|Twin|Triple|Single)$/i.test(clean(v)); }
+
+function mapRoomType(v){
+  const s=clean(v).toLowerCase();
+  if(s==="double") return "DBL";
+  if(s==="twin") return "TWI";
+  if(s==="triple") return "TRI";
+  if(s==="single") return document.getElementById("singleMode").value;
+  return "";
+}
+function detectAdultBySourceType(sourceRoomType){
+  const s=clean(sourceRoomType).toLowerCase();
+  if(s==="double") return 2;
+  if(s==="twin") return 2;
+  if(s==="triple") return 3;
+  if(s==="single") return 1;
+  return "";
+}
+function detectSpecials(n,f){
+  const t=(n+" "+f).toLowerCase();
+  if(t.includes("guide")) return "Guide";
+  if(t.includes("driver")) return "Driver";
+  if(t.includes("leader")) return "Leader";
+  return "";
+}
+function rowHasGuest(row){ return clean(row[3]) || clean(row[4]) || clean(row[5]) || clean(row[6]); }
+function guestFromRow(row){
+  const fullSurname=joinParts(row[3],row[4]);
+  const fullFirst=joinParts(row[5],row[6]);
+  return { name: fullSurname, firstName: fullFirst, specials: detectSpecials(fullSurname,fullFirst) };
+}
+async function loadWorkbook(file){
+  const data=await file.arrayBuffer();
+  return XLSX.read(data,{type:"array"});
+}
+function updateStats(){
+  document.getElementById("statRooms").textContent=parsedRooms.length;
+  document.getElementById("statDBL").textContent=parsedRooms.filter(x=>x.roomType==="DBL").length;
+  document.getElementById("statTWI").textContent=parsedRooms.filter(x=>x.roomType==="TWI").length;
+  document.getElementById("statTRI").textContent=parsedRooms.filter(x=>x.roomType==="TRI").length;
+  document.getElementById("statAdults").textContent=parsedRooms.reduce((a,b)=>a+Number(b.adult||0),0);
+}
+function escapeHtml(v){
+  return String(v ?? "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
+}
+function renderRows(){
+  const tb=document.getElementById("tbody");
+  tb.innerHTML="";
+  const arrival=document.getElementById("arrival").value;
+  const departure=document.getElementById("departure").value;
+  const arrivalDisplay=formatDateEU(arrival);
+  const departureDisplay=formatDateEU(departure);
+  const payment=document.getElementById("payment").value;
+
+  parsedRooms.forEach((g,i)=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML=`
+      <td>${i+1}</td>
+      <td>${escapeHtml(g.name)}</td>
+      <td>${escapeHtml(g.firstName)}</td>
+      <td>${escapeHtml(arrivalDisplay)}</td>
+      <td>${escapeHtml(departureDisplay)}</td>
+      <td>${escapeHtml(g.roomType)}</td>
+      <td>${escapeHtml(g.adult)}</td>
+      <td>${escapeHtml(payment)}</td>
+      <td>${escapeHtml(g.specials)}</td>`;
+    tb.appendChild(tr);
+  });
+
+  updateStats();
+  document.getElementById("summary").innerHTML=`<b>${parsedRooms.length}</b> Zimmer erkannt | Arrival: ${clean(arrivalDisplay)} | Departure: ${clean(departureDisplay)}`;
+}
+
+async function analyzeViya(){
+  const file=document.getElementById("viyaFile").files[0];
+  if(!file){ alert("Bitte Datei wählen"); return; }
+
+  const wb=await loadWorkbook(file);
+  const ws=wb.Sheets[wb.SheetNames[0]];
+  const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:""});
+  autoFillDatesFromHeader(rows);
+
+  parsedRooms=[];
+  let startRow = rows.findIndex(r => clean((r||[])[0]) === "No");
+  if(startRow < 0){
+    log("Header 'No' nicht gefunden.");
+    renderRows();
+    return;
+  }
+
+  for(let i=startRow+1; i<rows.length; i++){
+    const row = rows[i] || [];
+    const colA = clean(row[0]);
+
+    if(!isRoomStart(colA)) continue;
+
+    // name always from the room header row itself
+    if(!rowHasGuest(row)) continue;
+    const guest = guestFromRow(row);
+
+    // find room type in following lines until next x.Room
+    let sourceRoomType = "";
+    for(let j=i+1; j<rows.length; j++){
+      const nextRow = rows[j] || [];
+      const a = clean(nextRow[0]);
+
+      if(isRoomStart(a)) break;
+      if(isRoomType(a)){ sourceRoomType = a; break; }
+    }
+
+    // fallback only if really missing
+    if(!sourceRoomType && isRoomType(row[9])) sourceRoomType = clean(row[9]);
+
+    if(!sourceRoomType){
+      log("Room Type nicht gefunden für " + colA + " / " + guest.name + " " + guest.firstName);
+      continue;
+    }
+
+    parsedRooms.push({
+      name: guest.name,
+      firstName: guest.firstName,
+      roomType: mapRoomType(sourceRoomType),
+      adult: detectAdultBySourceType(sourceRoomType),
+      specials: guest.specials
+    });
+  }
+
+  renderRows();
+  log("Analyse fertig: "+parsedRooms.length+" Zimmer");
+}
+
+async function maybeLoadTemplate(){
+  const file=document.getElementById("templateFile").files[0];
+  if(!file){ templateWorkbook=null; return; }
+  templateWorkbook=await loadWorkbook(file);
+  log("Template geladen: "+file.name);
+}
+
+function setCell(ws, addr, value, type){
+  ws[addr]={ t:type, v:value };
+}
+
+function isoToExcelSerial(iso){
+  const s = clean(iso);
+  if(!s || !/^\d{4}-\d{2}-\d{2}$/.test(s)) return null;
+  const [y,m,d] = s.split("-").map(Number);
+  const utc = Date.UTC(y, m - 1, d);
+  return utc / 86400000 + 25569;
+}
+function setDateCell(ws, addr, iso){
+  const serial = isoToExcelSerial(iso);
+  if(serial === null){
+    ws[addr] = { t:"s", v: formatDateEU(iso) };
+  } else {
+    ws[addr] = { t:"n", v: serial, z:"dd.mm.yy" };
+  }
+}
+function exportRows(){
+  return parsedRooms.map((g,i)=>({
+    line:i+1,
+    name:g.name,
+    firstName:g.firstName,
+    arrival:document.getElementById("arrival").value,
+    departure:document.getElementById("departure").value,
+    roomType:g.roomType,
+    payment:document.getElementById("payment").value,
+    adult:g.adult,
+    specials:g.specials
+  }));
+}
+function writeIntoSheet(ws, rows){
+  setCell(ws,"A1","Line","s");
+  setCell(ws,"B1","Name","s");
+  setCell(ws,"C1","First Name","s");
+  setCell(ws,"E1","Arrival","s");
+  setCell(ws,"F1","Departure","s");
+  setCell(ws,"G1","Room Type","s");
+  setCell(ws,"H1","Payment Method","s");
+  setCell(ws,"J1","Adult","s");
+  setCell(ws,"O1","Specials","s");
+
+  rows.forEach((row, idx)=>{
+    const r=idx+2;
+    setCell(ws,"A"+r,row.line,"n");
+    setCell(ws,"B"+r,row.name,"s");
+    setCell(ws,"C"+r,row.firstName,"s");
+    setDateCell(ws,"E"+r,row.arrival);
+    setDateCell(ws,"F"+r,row.departure);
+    setCell(ws,"G"+r,row.roomType,"s");
+    setCell(ws,"H"+r,row.payment,"s");
+    setCell(ws,"J"+r,Number(row.adult||0),"n");
+    if(row.specials) setCell(ws,"O"+r,row.specials,"s");
+  });
+
+  ws["!ref"]="A1:O"+(rows.length+2);
+}
+function exportExcel(useTemplate){
+  if(!parsedRooms.length){ alert("Bitte zuerst analysieren"); return; }
+
+  const rows=exportRows();
+  let wb, ws;
+
+  if(useTemplate && templateWorkbook){
+    wb=templateWorkbook;
+    const firstSheet=wb.SheetNames[0];
+    ws=wb.Sheets[firstSheet];
+    writeIntoSheet(ws, rows);
+    XLSX.writeFile(wb, "Viya_PMS_Final_Template.xlsx");
+  } else {
+    wb=XLSX.utils.book_new();
+    ws={};
+    writeIntoSheet(ws, rows);
+    XLSX.utils.book_append_sheet(wb, ws, "Rooming List");
+    XLSX.writeFile(wb, "Viya_PMS_Final.xlsx");
+  }
+  log("Export erstellt: "+rows.length+" Zeilen");
+}
+
+document.getElementById("analyzeBtn").onclick=analyzeViya;
+document.getElementById("exportBtn").onclick=async ()=>{ await maybeLoadTemplate(); exportExcel(true); };
+document.getElementById("exportBlankBtn").onclick=()=>exportExcel(false);
+log("Tool geladen");
+</script>
+</body>
+</html>
