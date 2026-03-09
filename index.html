@@ -34,6 +34,7 @@ textarea{min-height:280px;resize:vertical}
 button{cursor:pointer;font-weight:700;background:#111827;color:#fff}
 button.secondary{background:#fff;color:#111827}
 button.green{background:var(--ok)}
+button.danger{background:#b91c1c}
 .row{display:flex;gap:10px;flex-wrap:wrap}
 .row button{width:auto}
 .table-wrap{max-height:520px;overflow:auto;border:1px solid var(--line);border-radius:14px}
@@ -52,6 +53,7 @@ th:nth-child(6), td:nth-child(6){width:160px}
 .pill{display:inline-block;padding:4px 9px;border-radius:999px;background:#eef2ff;color:#3730a3;font-size:12px;font-weight:700;margin-right:6px;margin-bottom:6px}
 td input, td select{padding:7px 8px;font-size:13px}
 .coming{font-size:15px;line-height:1.6;color:#334155}
+.action-cell button{padding:7px 10px;font-size:12px;border-radius:10px;width:auto}
 @media (max-width:980px){.app{grid-template-columns:1fr}.sidebar{padding-bottom:10px}.grid,.stats{grid-template-columns:1fr}}
 </style>
 </head>
@@ -99,6 +101,7 @@ td input, td select{padding:7px 8px;font-size:13px}
         <div class="row">
           <button id="viyaAnalyzeBtn">Viya analysieren</button>
           <button id="viyaExportBtn" class="green">Mit Standard-Template exportieren</button>
+          <button id="viyaPickTemplateBtn" class="secondary">Template-Datei wählen</button>
           <button id="viyaExportBlankBtn" class="secondary">Ohne Template exportieren</button>
         </div>
       </div>
@@ -116,11 +119,14 @@ td input, td select{padding:7px 8px;font-size:13px}
       </div>
 
       <div class="card">
+        <div class="row" style="margin-bottom:12px">
+          <button id="viyaAddRowBtn" class="secondary">Zeile hinzufügen</button>
+        </div>
         <div class="table-wrap">
           <table>
             <thead>
               <tr>
-                <th>Line</th><th>Name</th><th>First Name</th><th>Arrival</th><th>Departure</th><th>Room Type</th><th>Adult</th><th>Payment</th><th>Specials</th>
+                <th>Line</th><th>Name</th><th>First Name</th><th>Arrival</th><th>Departure</th><th>Room Type</th><th>Adults</th><th>Payment</th><th>Action</th>
               </tr>
             </thead>
             <tbody id="viyaTbody"></tbody>
@@ -161,6 +167,7 @@ td input, td select{padding:7px 8px;font-size:13px}
         <div class="row">
           <button id="emeAnalyzeBtn">Emetravel analysieren</button>
           <button id="emeExportBtn" class="green">Mit Standard-Template exportieren</button>
+          <button id="emePickTemplateBtn" class="secondary">Template-Datei wählen</button>
           <button id="emeExportBlankBtn" class="secondary">Ohne Template exportieren</button>
         </div>
       </div>
@@ -178,11 +185,14 @@ td input, td select{padding:7px 8px;font-size:13px}
       </div>
 
       <div class="card">
+        <div class="row" style="margin-bottom:12px">
+          <button id="emeAddRowBtn" class="secondary">Zeile hinzufügen</button>
+        </div>
         <div class="table-wrap">
           <table>
             <thead>
               <tr>
-                <th>Line</th><th>Name</th><th>First Name</th><th>Arrival</th><th>Departure</th><th>Room Type</th><th>Adult</th><th>Payment</th><th>Specials</th><th>Quelle</th>
+                <th>Line</th><th>Name</th><th>First Name</th><th>Arrival</th><th>Departure</th><th>Room Type</th><th>Adults</th><th>Payment</th><th>Quelle</th><th>Action</th>
               </tr>
             </thead>
             <tbody id="emeTbody"></tbody>
@@ -228,6 +238,7 @@ td input, td select{padding:7px 8px;font-size:13px}
         <div class="row">
           <button id="exaAnalyzeBtn">Exa Travel analysieren</button>
           <button id="exaExportBtn" class="green">Mit Standard-Template exportieren</button>
+          <button id="exaPickTemplateBtn" class="secondary">Template-Datei wählen</button>
           <button id="exaExportBlankBtn" class="secondary">Ohne Template exportieren</button>
         </div>
       </div>
@@ -254,11 +265,14 @@ td input, td select{padding:7px 8px;font-size:13px}
       </div>
 
       <div class="card">
+        <div class="row" style="margin-bottom:12px">
+          <button id="exaAddRowBtn" class="secondary">Zeile hinzufügen</button>
+        </div>
         <div class="table-wrap">
           <table>
             <thead>
               <tr>
-                <th>Line</th><th>Name</th><th>First Name</th><th>Arrival</th><th>Departure</th><th>Room Type</th><th>Adult</th><th>Payment</th><th>Specials</th><th>Quelle</th>
+                <th>Line</th><th>Name</th><th>First Name</th><th>Arrival</th><th>Departure</th><th>Room Type</th><th>Adults</th><th>Payment</th><th>Quelle</th><th>Action</th>
               </tr>
             </thead>
             <tbody id="exaTbody"></tbody>
@@ -291,17 +305,10 @@ td input, td select{padding:7px 8px;font-size:13px}
 </div>
 
 <script>
-// GitHub / Web standard template for all modules.
-// Put your PMS template file in the SAME folder as this HTML on GitHub Pages,
-// or change the path below to your raw / hosted file URL.
 const DEFAULT_TEMPLATE_URL = "./Rooming_List_Final.xls";
+let templateArrayBuffer = null;
+let templateSourceName = "";
 
-async function fetchDefaultTemplateWorkbook(){
-  const res = await fetch(DEFAULT_TEMPLATE_URL);
-  if(!res.ok) throw new Error("Template konnte nicht geladen werden: " + DEFAULT_TEMPLATE_URL);
-  const buf = await res.arrayBuffer();
-  return XLSX.read(buf,{type:"array", cellDates:true});
-}
 function q(id){ return document.getElementById(id); }
 function clean(v){ return String(v ?? "").replace(/\s+/g," ").trim(); }
 function formatDateISO(y,m,d){ return `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`; }
@@ -375,6 +382,76 @@ function writePmsSheet(ws, rows){
   });
   ws["!ref"]="A1:O"+(rows.length+2);
 }
+async function fetchTemplateBuffer(){
+  const res = await fetch(DEFAULT_TEMPLATE_URL);
+  if(!res.ok) throw new Error("Template konnte nicht geladen werden: " + DEFAULT_TEMPLATE_URL);
+  return await res.arrayBuffer();
+}
+function askTemplateFile(){
+  return new Promise((resolve, reject)=>{
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.xls,.xlsx';
+    input.style.display = 'none';
+    document.body.appendChild(input);
+    input.addEventListener('change', async ()=>{
+      try{
+        const file = input.files && input.files[0];
+        if(!file){ reject(new Error('Template-Auswahl abgebrochen')); return; }
+        templateSourceName = file.name;
+        resolve(await file.arrayBuffer());
+      }catch(err){ reject(err); }
+      finally{ input.remove(); }
+    }, { once:true });
+    input.click();
+  });
+}
+
+async function pickTemplateManually(logFn){
+  templateArrayBuffer = await askTemplateFile();
+  if(logFn) logFn("Lokales Template geladen: " + templateSourceName);
+  return templateArrayBuffer;
+}
+async function ensureTemplateBuffer(logFn){
+  if(templateArrayBuffer) return templateArrayBuffer;
+  try{
+    templateArrayBuffer = await fetchTemplateBuffer();
+    templateSourceName = DEFAULT_TEMPLATE_URL;
+    if(logFn) logFn("Standard Template geladen: " + DEFAULT_TEMPLATE_URL);
+    return templateArrayBuffer;
+  }catch(err){
+    if(location.protocol === 'file:'){
+      if(logFn) logFn("Fetch des Templates lokal blockiert. Bitte zuerst 'Template-Datei wählen' klicken.");
+      throw new Error("Bitte zuerst 'Template-Datei wählen' klicken und Rooming_List_Final.xls oder .xlsx auswählen.");
+    }
+    throw err;
+  }
+}
+function getFreshTemplateWorkbook(){
+  if(!templateArrayBuffer) throw new Error('Template ist nicht geladen');
+  return XLSX.read(templateArrayBuffer.slice(0), {type:'array', cellDates:true});
+}
+function downloadWithTemplate(rows, filename){
+  const wb = getFreshTemplateWorkbook();
+  const ws = wb.Sheets[wb.SheetNames[0]];
+  writePmsSheet(ws, rows);
+  XLSX.writeFile(wb, filename);
+}
+function buildBlankWorkbook(rows, sheetName, filename){
+  const wb=XLSX.utils.book_new(), ws={};
+  writePmsSheet(ws, rows);
+  XLSX.utils.book_append_sheet(wb, ws, sheetName);
+  XLSX.writeFile(wb, filename);
+}
+function bindTableInputs(tbodyId, list, updateFn){
+  q(tbodyId).querySelectorAll('input[data-i], select[data-i]').forEach(el=>{
+    el.addEventListener('input', e=>{
+      const i=Number(e.target.dataset.i), k=e.target.dataset.k;
+      list[i][k]=e.target.value;
+      updateFn();
+    });
+  });
+}
 document.querySelectorAll('.navbtn').forEach(btn=>{
   btn.addEventListener('click', ()=>{
     document.querySelectorAll('.navbtn').forEach(b=>b.classList.remove('active'));
@@ -385,7 +462,7 @@ document.querySelectorAll('.navbtn').forEach(btn=>{
 });
 
 /* -------- VIYA -------- */
-let viyaParsedRooms = [], viyaTemplateWorkbook = null;
+let viyaParsedRooms = [];
 function viyaLog(m){ q("viyaLog").textContent = new Date().toLocaleTimeString()+" "+m+"\n"+q("viyaLog").textContent; }
 function viyaIsRoomStart(v){ return /^\d+\.Room$/i.test(clean(v)); }
 function viyaIsRoomType(v){ return /^(Double|Twin|Triple|Single)$/i.test(clean(v)); }
@@ -431,6 +508,13 @@ function viyaAutoDates(rows){
   if(found[0] && !q("viyaArrival").value) q("viyaArrival").value=found[0];
   if(found[1] && !q("viyaDeparture").value) q("viyaDeparture").value=found[1];
 }
+function viyaUpdateStats(){
+  q("viyaStatRooms").textContent=viyaParsedRooms.length;
+  q("viyaStatDBL").textContent=viyaParsedRooms.filter(x=>x.roomType==="DBL").length;
+  q("viyaStatTWI").textContent=viyaParsedRooms.filter(x=>x.roomType==="TWI").length;
+  q("viyaStatTRI").textContent=viyaParsedRooms.filter(x=>x.roomType==="TRI").length;
+  q("viyaStatAdults").textContent=viyaParsedRooms.reduce((a,b)=>a+Number(b.adult||0),0);
+}
 function viyaRender(){
   const tb=q("viyaTbody"); tb.innerHTML="";
   const arrivalDisplay=formatDateEU(q("viyaArrival").value);
@@ -438,14 +522,11 @@ function viyaRender(){
   const payment=q("viyaPayment").value;
   viyaParsedRooms.forEach((g,i)=>{
     const tr=document.createElement("tr");
-    tr.innerHTML=`<td>${i+1}</td><td>${escapeHtml(g.name)}</td><td>${escapeHtml(g.firstName)}</td><td>${escapeHtml(arrivalDisplay)}</td><td>${escapeHtml(departureDisplay)}</td><td>${escapeHtml(g.roomType)}</td><td>${escapeHtml(g.adult)}</td><td>${escapeHtml(payment)}</td><td>${escapeHtml(g.specials)}</td>`;
+    tr.innerHTML=`<td>${i+1}</td><td><input value="${escapeHtml(g.name)}" data-i="${i}" data-k="name"></td><td><input value="${escapeHtml(g.firstName)}" data-i="${i}" data-k="firstName"></td><td>${escapeHtml(arrivalDisplay)}</td><td>${escapeHtml(departureDisplay)}</td><td><select data-i="${i}" data-k="roomType"><option value="DBL" ${g.roomType==="DBL"?"selected":""}>DBL</option><option value="TWI" ${g.roomType==="TWI"?"selected":""}>TWI</option><option value="TRI" ${g.roomType==="TRI"?"selected":""}>TRI</option></select></td><td><input value="${escapeHtml(g.adult)}" data-i="${i}" data-k="adult"></td><td>${escapeHtml(payment)}</td><td class="action-cell"><button class="danger" onclick="viyaDeleteRow(${i})">Löschen</button></td>`;
     tb.appendChild(tr);
   });
-  q("viyaStatRooms").textContent=viyaParsedRooms.length;
-  q("viyaStatDBL").textContent=viyaParsedRooms.filter(x=>x.roomType==="DBL").length;
-  q("viyaStatTWI").textContent=viyaParsedRooms.filter(x=>x.roomType==="TWI").length;
-  q("viyaStatTRI").textContent=viyaParsedRooms.filter(x=>x.roomType==="TRI").length;
-  q("viyaStatAdults").textContent=viyaParsedRooms.reduce((a,b)=>a+Number(b.adult||0),0);
+  bindTableInputs("viyaTbody", viyaParsedRooms, viyaUpdateStats);
+  viyaUpdateStats();
   q("viyaSummary").innerHTML=`<b>${viyaParsedRooms.length}</b> Zimmer erkannt | Arrival: ${clean(arrivalDisplay)} | Departure: ${clean(departureDisplay)}`;
 }
 async function viyaAnalyze(){
@@ -477,30 +558,25 @@ async function viyaAnalyze(){
   viyaRender();
   viyaLog("Analyse fertig: "+viyaParsedRooms.length+" Zimmer");
 }
-async function viyaMaybeLoadTemplate(){
-  if(viyaTemplateWorkbook) return;
-  viyaTemplateWorkbook = await fetchDefaultTemplateWorkbook();
-  viyaLog("Standard Template geladen: " + DEFAULT_TEMPLATE_URL);
-}
+async function viyaMaybeLoadTemplate(){ await ensureTemplateBuffer(viyaLog); }
 function viyaExportRows(){
   return viyaParsedRooms.map((g,i)=>({line:i+1,name:g.name,firstName:g.firstName,arrival:q("viyaArrival").value,departure:q("viyaDeparture").value,roomType:g.roomType,payment:q("viyaPayment").value,adult:g.adult,specials:g.specials}));
 }
 function viyaExport(useTemplate){
   if(!viyaParsedRooms.length){ alert("Bitte zuerst Viya analysieren"); return; }
   const rows=viyaExportRows();
-  let wb, ws;
-  if(useTemplate && viyaTemplateWorkbook){
-    wb=viyaTemplateWorkbook; ws=wb.Sheets[wb.SheetNames[0]];
-    writePmsSheet(ws, rows); XLSX.writeFile(wb, "Viya_PMS_Hub_Template.xlsx");
+  if(useTemplate){
+    downloadWithTemplate(rows, "Viya_PMS_Hub_Template.xlsx");
   } else {
-    wb=XLSX.utils.book_new(); ws={};
-    writePmsSheet(ws, rows); XLSX.utils.book_append_sheet(wb, ws, "Rooming List"); XLSX.writeFile(wb, "Viya_PMS_Hub.xlsx");
+    buildBlankWorkbook(rows, "Rooming List", "Viya_PMS_Hub.xlsx");
   }
   viyaLog("Export erstellt: "+rows.length+" Zeilen");
 }
+function viyaDeleteRow(i){ viyaParsedRooms.splice(i,1); viyaRender(); }
+function viyaAddRow(){ viyaParsedRooms.push({name:"", firstName:"", roomType:"DBL", adult:2, specials:""}); viyaRender(); }
 
 /* -------- EMETRAVEL -------- */
-let emeParsedRooms = [], emeTemplateWorkbook = null;
+let emeParsedRooms = [];
 function emeLog(m){ q("emeLog").textContent = new Date().toLocaleTimeString()+" "+m+"\n"+q("emeLog").textContent; }
 function emeMapRoomType(rooming){
   const s = clean(rooming).toUpperCase();
@@ -539,6 +615,13 @@ function emeFindHeaderRow(rows){
   }
   return -1;
 }
+function emeUpdateStats(){
+  q("emeStatRooms").textContent=emeParsedRooms.length;
+  q("emeStatDBL").textContent=emeParsedRooms.filter(x=>x.roomType==="DBL").length;
+  q("emeStatTWI").textContent=emeParsedRooms.filter(x=>x.roomType==="TWI").length;
+  q("emeStatTRI").textContent=emeParsedRooms.filter(x=>x.roomType==="TRI").length;
+  q("emeStatAdults").textContent=emeParsedRooms.reduce((a,b)=>a+Number(b.adult||0),0);
+}
 function emeRender(){
   const tb=q("emeTbody"); tb.innerHTML="";
   const arrivalDisplay=formatDateEU(q("emeArrival").value);
@@ -546,24 +629,12 @@ function emeRender(){
   const payment=q("emePayment").value;
   emeParsedRooms.forEach((g,i)=>{
     const tr=document.createElement("tr");
-    tr.innerHTML=`<td>${i+1}</td><td><input value="${escapeHtml(g.name)}" data-i="${i}" data-k="name"></td><td><input value="${escapeHtml(g.firstName)}" data-i="${i}" data-k="firstName"></td><td>${escapeHtml(arrivalDisplay)}</td><td>${escapeHtml(departureDisplay)}</td><td><select data-i="${i}" data-k="roomType"><option value="DBL" ${g.roomType==="DBL"?"selected":""}>DBL</option><option value="TWI" ${g.roomType==="TWI"?"selected":""}>TWI</option><option value="TRI" ${g.roomType==="TRI"?"selected":""}>TRI</option></select></td><td><input value="${escapeHtml(g.adult)}" data-i="${i}" data-k="adult"></td><td>${escapeHtml(payment)}</td><td><input value="${escapeHtml(g.specials)}" data-i="${i}" data-k="specials"></td><td>${escapeHtml(g.source)}</td>`;
+    tr.innerHTML=`<td>${i+1}</td><td><input value="${escapeHtml(g.name)}" data-i="${i}" data-k="name"></td><td><input value="${escapeHtml(g.firstName)}" data-i="${i}" data-k="firstName"></td><td>${escapeHtml(arrivalDisplay)}</td><td>${escapeHtml(departureDisplay)}</td><td><select data-i="${i}" data-k="roomType"><option value="DBL" ${g.roomType==="DBL"?"selected":""}>DBL</option><option value="TWI" ${g.roomType==="TWI"?"selected":""}>TWI</option><option value="TRI" ${g.roomType==="TRI"?"selected":""}>TRI</option></select></td><td><input value="${escapeHtml(g.adult)}" data-i="${i}" data-k="adult"></td><td>${escapeHtml(payment)}</td><td>${escapeHtml(g.source)}</td><td class="action-cell"><button class="danger" onclick="emeDeleteRow(${i})">Löschen</button></td>`;
     tb.appendChild(tr);
   });
-  tb.querySelectorAll('input[data-i], select[data-i]').forEach(el=>{
-    el.addEventListener('input', e=>{
-      const i=Number(e.target.dataset.i), k=e.target.dataset.k;
-      emeParsedRooms[i][k]=e.target.value; emeUpdateStats();
-    });
-  });
+  bindTableInputs("emeTbody", emeParsedRooms, emeUpdateStats);
   emeUpdateStats();
   q("emeSummary").innerHTML=`<b>${emeParsedRooms.length}</b> Zimmer erkannt | Arrival: ${clean(arrivalDisplay)} | Departure: ${clean(departureDisplay)}`;
-}
-function emeUpdateStats(){
-  q("emeStatRooms").textContent=emeParsedRooms.length;
-  q("emeStatDBL").textContent=emeParsedRooms.filter(x=>x.roomType==="DBL").length;
-  q("emeStatTWI").textContent=emeParsedRooms.filter(x=>x.roomType==="TWI").length;
-  q("emeStatTRI").textContent=emeParsedRooms.filter(x=>x.roomType==="TRI").length;
-  q("emeStatAdults").textContent=emeParsedRooms.reduce((a,b)=>a+Number(b.adult||0),0);
 }
 async function emeAnalyze(){
   const file=q("emeFile").files[0];
@@ -585,30 +656,25 @@ async function emeAnalyze(){
   emeRender();
   emeLog("Analyse fertig: "+emeParsedRooms.length+" Zimmer");
 }
-async function emeMaybeLoadTemplate(){
-  if(emeTemplateWorkbook) return;
-  emeTemplateWorkbook = await fetchDefaultTemplateWorkbook();
-  emeLog("Standard Template geladen: " + DEFAULT_TEMPLATE_URL);
-}
+async function emeMaybeLoadTemplate(){ await ensureTemplateBuffer(emeLog); }
 function emeExportRows(){
   return emeParsedRooms.map((g,i)=>({line:i+1,name:g.name,firstName:g.firstName,arrival:q("emeArrival").value,departure:q("emeDeparture").value,roomType:g.roomType,payment:q("emePayment").value,adult:g.adult,specials:g.specials}));
 }
 function emeExport(useTemplate){
   if(!emeParsedRooms.length){ alert("Bitte zuerst Emetravel analysieren"); return; }
   const rows=emeExportRows();
-  let wb, ws;
-  if(useTemplate && emeTemplateWorkbook){
-    wb=emeTemplateWorkbook; ws=wb.Sheets[wb.SheetNames[0]];
-    writePmsSheet(ws, rows); XLSX.writeFile(wb, "Emetravel_PMS_Hub_Template.xlsx");
+  if(useTemplate){
+    downloadWithTemplate(rows, "Emetravel_PMS_Hub_Template.xlsx");
   } else {
-    wb=XLSX.utils.book_new(); ws={};
-    writePmsSheet(ws, rows); XLSX.utils.book_append_sheet(wb, ws, "Rooming List"); XLSX.writeFile(wb, "Emetravel_PMS_Hub.xlsx");
+    buildBlankWorkbook(rows, "Rooming List", "Emetravel_PMS_Hub.xlsx");
   }
   emeLog("Export erstellt: "+rows.length+" Zeilen");
 }
+function emeDeleteRow(i){ emeParsedRooms.splice(i,1); emeRender(); }
+function emeAddRow(){ emeParsedRooms.push({name:"", firstName:"", roomType:"DBL", adult:2, specials:"", source:""}); emeRender(); }
 
 /* -------- EXA TRAVEL -------- */
-let exaParsedRooms = [], exaTemplateWorkbook = null;
+let exaParsedRooms = [];
 function exaLog(m){ q("exaLog").textContent = new Date().toLocaleTimeString()+" "+m+"\n"+q("exaLog").textContent; }
 function exaMapRoomType(room){
   const s = clean(room).toUpperCase();
@@ -632,6 +698,13 @@ function exaSpecials(lastName, firstName){
   if(t.includes("DRIVER")) return "Driver";
   return "";
 }
+function exaUpdateStats(){
+  q("exaStatRooms").textContent=exaParsedRooms.length;
+  q("exaStatDBL").textContent=exaParsedRooms.filter(x=>x.roomType==="DBL").length;
+  q("exaStatTWI").textContent=exaParsedRooms.filter(x=>x.roomType==="TWI").length;
+  q("exaStatTRI").textContent=exaParsedRooms.filter(x=>x.roomType==="TRI").length;
+  q("exaStatAdults").textContent=exaParsedRooms.reduce((a,b)=>a+Number(b.adult||0),0);
+}
 function exaRender(){
   const tb=q("exaTbody"); tb.innerHTML="";
   const arrivalDisplay=formatDateEU(q("exaArrival").value);
@@ -639,24 +712,12 @@ function exaRender(){
   const payment=q("exaPayment").value;
   exaParsedRooms.forEach((g,i)=>{
     const tr=document.createElement("tr");
-    tr.innerHTML=`<td>${i+1}</td><td><input value="${escapeHtml(g.name)}" data-i="${i}" data-k="name"></td><td><input value="${escapeHtml(g.firstName)}" data-i="${i}" data-k="firstName"></td><td>${escapeHtml(arrivalDisplay)}</td><td>${escapeHtml(departureDisplay)}</td><td><select data-i="${i}" data-k="roomType"><option value="DBL" ${g.roomType==="DBL"?"selected":""}>DBL</option><option value="TWI" ${g.roomType==="TWI"?"selected":""}>TWI</option><option value="TRI" ${g.roomType==="TRI"?"selected":""}>TRI</option></select></td><td><input value="${escapeHtml(g.adult)}" data-i="${i}" data-k="adult"></td><td>${escapeHtml(payment)}</td><td><input value="${escapeHtml(g.specials)}" data-i="${i}" data-k="specials"></td><td>${escapeHtml(g.source)}</td>`;
+    tr.innerHTML=`<td>${i+1}</td><td><input value="${escapeHtml(g.name)}" data-i="${i}" data-k="name"></td><td><input value="${escapeHtml(g.firstName)}" data-i="${i}" data-k="firstName"></td><td>${escapeHtml(arrivalDisplay)}</td><td>${escapeHtml(departureDisplay)}</td><td><select data-i="${i}" data-k="roomType"><option value="DBL" ${g.roomType==="DBL"?"selected":""}>DBL</option><option value="TWI" ${g.roomType==="TWI"?"selected":""}>TWI</option><option value="TRI" ${g.roomType==="TRI"?"selected":""}>TRI</option></select></td><td><input value="${escapeHtml(g.adult)}" data-i="${i}" data-k="adult"></td><td>${escapeHtml(payment)}</td><td>${escapeHtml(g.source)}</td><td class="action-cell"><button class="danger" onclick="exaDeleteRow(${i})">Löschen</button></td>`;
     tb.appendChild(tr);
   });
-  tb.querySelectorAll('input[data-i], select[data-i]').forEach(el=>{
-    el.addEventListener('input', e=>{
-      const i=Number(e.target.dataset.i), k=e.target.dataset.k;
-      exaParsedRooms[i][k]=e.target.value; exaUpdateStats();
-    });
-  });
+  bindTableInputs("exaTbody", exaParsedRooms, exaUpdateStats);
   exaUpdateStats();
   q("exaSummary").innerHTML=`<b>${exaParsedRooms.length}</b> Zimmer erkannt | Arrival: ${clean(arrivalDisplay)} | Departure: ${clean(departureDisplay)}`;
-}
-function exaUpdateStats(){
-  q("exaStatRooms").textContent=exaParsedRooms.length;
-  q("exaStatDBL").textContent=exaParsedRooms.filter(x=>x.roomType==="DBL").length;
-  q("exaStatTWI").textContent=exaParsedRooms.filter(x=>x.roomType==="TWI").length;
-  q("exaStatTRI").textContent=exaParsedRooms.filter(x=>x.roomType==="TRI").length;
-  q("exaStatAdults").textContent=exaParsedRooms.reduce((a,b)=>a+Number(b.adult||0),0);
 }
 function exaAutoDates(lines){
   let found=[];
@@ -674,12 +735,8 @@ function exaAutoDates(lines){
   if(found[1] && !q("exaDeparture").value) q("exaDeparture").value=found[1];
 }
 function exaParseFlexibleLine(line){
-  // Keep empties when tabs exist; fall back to multi-space parsing.
-  if(line.includes('\t')){
-    return line.split('\t').map(x=>clean(x));
-  }
-  const cols = line.split(/\s{2,}/).map(x=>clean(x));
-  return cols;
+  if(line.includes('\t')) return line.split('\t').map(x=>clean(x));
+  return line.split(/\s{2,}/).map(x=>clean(x));
 }
 function exaFindPaxHeader(lines){
   return lines.findIndex(l => {
@@ -687,21 +744,11 @@ function exaFindPaxHeader(lines){
     return s.includes('PAX') && s.includes('LAST NAME') && s.includes('ADT/CHD') && s.includes('ROOM');
   });
 }
-function exaNormalizeHeader(line){
-  return clean(line).toUpperCase().replace(/\s+/g,' ');
-}
-function exaLooksLikePassengerLine(line){
-  return /^\s*\d+\s+/.test(line) || /^\d+\t/.test(line);
-}
+function exaNormalizeHeader(line){ return clean(line).toUpperCase().replace(/\s+/g,' '); }
+function exaLooksLikePassengerLine(line){ return /^\s*\d+\s+/.test(line) || /^\d+\t/.test(line); }
 function exaExtractRoomToken(line){
   const u = clean(line).toUpperCase();
-  const patterns = [
-    /TPL\s*C\/MNR\d+/,
-    /\bTPL\b/,
-    /\bTWIN\b/,
-    /\bDBL(?:\s*\+\s*IFN)?\b/,
-    /\bSGL\b/
-  ];
+  const patterns = [/TPL\s*C\/MNR\d+/, /\bTPL\b/, /\bTWIN\b/, /\bDBL(?:\s*\+\s*IFN)?\b/, /\bSGL\b/];
   for(const p of patterns){
     const m = u.match(p);
     if(m) return m[0];
@@ -711,43 +758,30 @@ function exaExtractRoomToken(line){
 async function exaAnalyze(){
   const text = q("exaText").value;
   if(!clean(text)){ alert("Bitte den Exa Travel E-Mail-Text einfügen"); return; }
-
   const lines = text.split(/\r?\n/).map(x=>x.replace(/\r/g,'')).filter(x=>clean(x));
   exaAutoDates(lines);
   exaParsedRooms = [];
-
   const headerIdx = exaFindPaxHeader(lines);
   if(headerIdx < 0){ exaLog("PAX Header nicht gefunden."); exaRender(); return; }
-
   for(let i=headerIdx+1;i<lines.length;i++){
     const line = lines[i];
     const norm = exaNormalizeHeader(line);
-
     if(norm.startsWith('NIGHTS DATE CITY')) continue;
     if(norm.startsWith('PAX LAST NAME NAME')) continue;
     if(!exaLooksLikePassengerLine(line)) continue;
-
     const cols = exaParseFlexibleLine(line);
     const paxNo = clean(cols[0] || "");
     if(!/^\d+$/.test(paxNo)) continue;
-
     let lastName = clean(cols[1] || "");
     let firstName = clean(cols[2] || "");
-
-    // Extract room token from the whole line, not fixed column position.
     const room = exaExtractRoomToken(line);
     if(!room) continue;
-
     const roomType = exaMapRoomType(room);
     if(!roomType) continue;
-
     const lineUpper = clean(line).toUpperCase();
-
     let outLast = lastName;
     let outFirst = firstName;
     let outSpecials = "";
-
-    // Driver / Guide may be spread across sparse columns or only appear once in the line.
     if(/\bGUIDE\b/.test(lineUpper)){
       outLast = 'Guide';
       outFirst = '';
@@ -759,54 +793,45 @@ async function exaAnalyze(){
     } else {
       outSpecials = exaSpecials(outLast, outFirst);
     }
-
-    exaParsedRooms.push({
-      name: outLast,
-      firstName: outFirst,
-      roomType: roomType,
-      adult: exaAdult(room),
-      specials: outSpecials,
-      source: room
-    });
+    exaParsedRooms.push({ name: outLast, firstName: outFirst, roomType: roomType, adult: exaAdult(room), specials: outSpecials, source: room });
   }
-
   exaRender();
   exaLog("Analyse fertig: "+exaParsedRooms.length+" Zimmer");
 }
-async function exaMaybeLoadTemplate(){
-  if(exaTemplateWorkbook) return;
-  exaTemplateWorkbook = await fetchDefaultTemplateWorkbook();
-  exaLog("Standard Template geladen: " + DEFAULT_TEMPLATE_URL);
-}
+async function exaMaybeLoadTemplate(){ await ensureTemplateBuffer(exaLog); }
 function exaExportRows(){
   return exaParsedRooms.map((g,i)=>({line:i+1,name:g.name,firstName:g.firstName,arrival:q("exaArrival").value,departure:q("exaDeparture").value,roomType:g.roomType,payment:q("exaPayment").value,adult:g.adult,specials:g.specials}));
 }
 function exaExport(useTemplate){
   if(!exaParsedRooms.length){ alert("Bitte zuerst Exa Travel analysieren"); return; }
   const rows=exaExportRows();
-  let wb, ws;
-  if(useTemplate && exaTemplateWorkbook){
-    wb=exaTemplateWorkbook; ws=wb.Sheets[wb.SheetNames[0]];
-    writePmsSheet(ws, rows); XLSX.writeFile(wb, "ExaTravel_PMS_Hub_Template.xlsx");
+  if(useTemplate){
+    downloadWithTemplate(rows, "ExaTravel_PMS_Hub_Template.xlsx");
   } else {
-    wb=XLSX.utils.book_new(); ws={};
-    writePmsSheet(ws, rows); XLSX.utils.book_append_sheet(wb, ws, "Rooming List"); XLSX.writeFile(wb, "ExaTravel_PMS_Hub.xlsx");
+    buildBlankWorkbook(rows, "Rooming List", "ExaTravel_PMS_Hub.xlsx");
   }
   exaLog("Export erstellt: "+rows.length+" Zeilen");
 }
+function exaDeleteRow(i){ exaParsedRooms.splice(i,1); exaRender(); }
+function exaAddRow(){ exaParsedRooms.push({name:"", firstName:"", roomType:"DBL", adult:2, specials:"", source:""}); exaRender(); }
 
-/* bindings */
 q("viyaAnalyzeBtn").onclick=viyaAnalyze;
-q("viyaExportBtn").onclick=async ()=>{ await viyaMaybeLoadTemplate(); viyaExport(true); };
+q("viyaPickTemplateBtn").onclick=async ()=>{ try{ await pickTemplateManually(viyaLog); }catch(err){ viyaLog("Template-Auswahl Fehler: " + err.message); alert(err.message); } };
+q("viyaExportBtn").onclick=async ()=>{ try{ await viyaMaybeLoadTemplate(); viyaExport(true); }catch(err){ viyaLog("Template-Export Fehler: " + err.message); alert(err.message); } };
 q("viyaExportBlankBtn").onclick=()=>viyaExport(false);
+q("viyaAddRowBtn").onclick=viyaAddRow;
 
 q("emeAnalyzeBtn").onclick=emeAnalyze;
-q("emeExportBtn").onclick=async ()=>{ await emeMaybeLoadTemplate(); emeExport(true); };
+q("emePickTemplateBtn").onclick=async ()=>{ try{ await pickTemplateManually(emeLog); }catch(err){ emeLog("Template-Auswahl Fehler: " + err.message); alert(err.message); } };
+q("emeExportBtn").onclick=async ()=>{ try{ await emeMaybeLoadTemplate(); emeExport(true); }catch(err){ emeLog("Template-Export Fehler: " + err.message); alert(err.message); } };
 q("emeExportBlankBtn").onclick=()=>emeExport(false);
+q("emeAddRowBtn").onclick=emeAddRow;
 
 q("exaAnalyzeBtn").onclick=exaAnalyze;
-q("exaExportBtn").onclick=async ()=>{ await exaMaybeLoadTemplate(); exaExport(true); };
+q("exaPickTemplateBtn").onclick=async ()=>{ try{ await pickTemplateManually(exaLog); }catch(err){ exaLog("Template-Auswahl Fehler: " + err.message); alert(err.message); } };
+q("exaExportBtn").onclick=async ()=>{ try{ await exaMaybeLoadTemplate(); exaExport(true); }catch(err){ exaLog("Template-Export Fehler: " + err.message); alert(err.message); } };
 q("exaExportBlankBtn").onclick=()=>exaExport(false);
+q("exaAddRowBtn").onclick=exaAddRow;
 
 viyaLog("Viya-Modul geladen");
 emeLog("Emetravel-Modul geladen");
