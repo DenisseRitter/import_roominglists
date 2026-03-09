@@ -358,7 +358,36 @@ function escapeHtml(v){
     .replaceAll(">","&gt;")
     .replaceAll('"',"&quot;");
 }
+function colToIndex(col){
+  let n = 0;
+  for(let i=0;i<col.length;i++) n = n * 26 + (col.charCodeAt(i) - 64);
+  return n;
+}
+function indexToCol(n){
+  let s = "";
+  while(n > 0){
+    const m = (n - 1) % 26;
+    s = String.fromCharCode(65 + m) + s;
+    n = Math.floor((n - 1) / 26);
+  }
+  return s;
+}
+function findHeaderColumn(ws, headerText){
+  const target = clean(headerText).toUpperCase();
+  for(let i=1;i<=50;i++){
+    const addr = indexToCol(i) + "1";
+    const cell = ws[addr];
+    if(cell && clean(cell.v).toUpperCase() === target) return indexToCol(i);
+  }
+  return "";
+}
+function clearColumn(ws, col, rowStart, rowEnd){
+  for(let r=rowStart;r<=rowEnd;r++) delete ws[col + r];
+}
 function writePmsSheet(ws, rows){
+  const existingAdultsCol = findHeaderColumn(ws, "Adults");
+  const adultsCol = existingAdultsCol || "J";
+
   setCell(ws,"A1","Line","s");
   setCell(ws,"B1","Name","s");
   setCell(ws,"C1","First Name","s");
@@ -366,8 +395,14 @@ function writePmsSheet(ws, rows){
   setCell(ws,"F1","Departure","s");
   setCell(ws,"G1","Room Type","s");
   setCell(ws,"H1","Payment Method","s");
-  setCell(ws,"J1","Adult","s");
+  setCell(ws,adultsCol+"1","Adults","s");
   setCell(ws,"O1","Specials","s");
+
+  if(adultsCol !== "J"){
+    delete ws["J1"];
+    clearColumn(ws, "J", 2, rows.length + 200);
+  }
+
   rows.forEach((row, idx)=>{
     const r=idx+2;
     setCell(ws,"A"+r,row.line,"n");
@@ -377,10 +412,12 @@ function writePmsSheet(ws, rows){
     setDateCell(ws,"F"+r,row.departure);
     setCell(ws,"G"+r,row.roomType,"s");
     setCell(ws,"H"+r,row.payment,"s");
-    setCell(ws,"J"+r,Number(row.adult||0),"n");
+    setCell(ws,adultsCol+r,Number(row.adult||0),"n");
     if(row.specials) setCell(ws,"O"+r,row.specials,"s");
   });
-  ws["!ref"]="A1:O"+(rows.length+2);
+
+  const endColIndex = Math.max(colToIndex("O"), colToIndex(adultsCol));
+  ws["!ref"] = "A1:" + indexToCol(endColIndex) + (rows.length + 2);
 }
 async function fetchTemplateBuffer(){
   const res = await fetch(DEFAULT_TEMPLATE_URL);
