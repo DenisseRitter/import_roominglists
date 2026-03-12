@@ -65,6 +65,7 @@ td input, td select{padding:7px 8px;font-size:13px}
     <button class="navbtn active" data-page="page-viya">Viya Travel</button>
     <button class="navbtn" data-page="page-eme">Emetravel</button>
     <button class="navbtn" data-page="page-exa">Exa Travel</button>
+    <button class="navbtn" data-page="page-bey">Bey Tours</button>
     <button class="navbtn" data-page="page-future">Weitere Kunden</button>
   </aside>
 
@@ -281,6 +282,72 @@ td input, td select{padding:7px 8px;font-size:13px}
       </div>
 
       <div class="card"><div id="exaLog" class="log"></div></div>
+    </section>
+
+    <section id="page-bey" class="page">
+      <h1>Bey Tours</h1>
+      <p class="desc">Eigene Logik für das Bey-Tours-Format. Getrennt von Viya, Emetravel und Exa Travel.</p>
+
+      <div class="card">
+        <div class="note">
+          Die Datei wird über die Spalten <b>PAX / APELLIDO PATERNO / APELLIDO MATERNO / PRIMER NOMBRE / SEGUNDO NOMBRE / TIPO DE HABITACIÓN</b> gelesen.<br>
+          In <b>TIPO DE HABITACIÓN</b> steht nur in der ersten Zeile eines Zimmers ein Wert (<b>TPL</b>, <b>TWIN</b>, <b>DBL</b>, <b>SGL</b>). Genau diese Zeile wird als Zimmer-Zeile verwendet.
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="grid">
+          <div><label>Bey Tours Rooming List</label><input id="beyFile" type="file" accept=".xlsx,.xls"></div>
+          <div><label>PMS Template</label><input value="Standard Template aktiv" disabled></div>
+          <div><label>Anreise</label><input id="beyArrival" type="date"></div>
+          <div><label>Abreise</label><input id="beyDeparture" type="date"></div>
+          <div>
+            <label>Single exportieren als</label>
+            <select id="beySingleMode"><option value="DBL">DBL</option><option value="TWI">TWI</option></select>
+          </div>
+          <div>
+            <label>Payment</label>
+            <select id="beyPayment"><option value="CA">CA</option><option value="CC">CC</option><option value="BT">BT</option></select>
+          </div>
+        </div>
+        <div style="height:12px"></div>
+        <div class="row">
+          <button id="beyAnalyzeBtn">Bey Tours analysieren</button>
+          <button id="beyExportBtn" class="green">Mit Standard-Template exportieren</button>
+          <button id="beyPickTemplateBtn" class="secondary">Template-Datei wählen</button>
+          <button id="beyExportBlankBtn" class="secondary">Ohne Template exportieren</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="stats">
+          <div class="stat"><b id="beyStatRooms">0</b><span class="small">erkannte Zimmer</span></div>
+          <div class="stat"><b id="beyStatDBL">0</b><span class="small">DBL</span></div>
+          <div class="stat"><b id="beyStatTWI">0</b><span class="small">TWI</span></div>
+          <div class="stat"><b id="beyStatTRI">0</b><span class="small">TRI</span></div>
+          <div class="stat"><b id="beyStatAdults">0</b><span class="small">Adults gesamt</span></div>
+        </div>
+        <div style="height:12px"></div>
+        <div class="ok" id="beySummary">Noch keine Datei analysiert.</div>
+      </div>
+
+      <div class="card">
+        <div class="row" style="margin-bottom:12px">
+          <button id="beyAddRowBtn" class="secondary">Zeile hinzufügen</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Line</th><th>Name</th><th>First Name</th><th>Arrival</th><th>Departure</th><th>Room Type</th><th>Adults</th><th>Payment</th><th>Quelle</th><th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="beyTbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card"><div id="beyLog" class="log"></div></div>
     </section>
 
     <section id="page-future" class="page">
@@ -842,6 +909,124 @@ function exaExport(useTemplate){
 function exaDeleteRow(i){ exaParsedRooms.splice(i,1); exaRender(); }
 function exaAddRow(){ exaParsedRooms.push({name:"", firstName:"", roomType:"DBL", adult:2, specials:"", source:""}); exaRender(); }
 
+/* -------- BEY TOURS -------- */
+let beyParsedRooms = [];
+function beyLog(m){ q("beyLog").textContent = new Date().toLocaleTimeString()+" "+m+"\n"+q("beyLog").textContent; }
+function beyMapRoomType(rooming){
+  const s = clean(rooming).toUpperCase();
+  if(s.includes("TPL")) return "TRI";
+  if(s.includes("TWIN")) return "TWI";
+  if(s.includes("DBL")) return "DBL";
+  if(s === "SGL") return q("beySingleMode").value;
+  return "";
+}
+function beyAdult(rooming){
+  const s = clean(rooming).toUpperCase();
+  if(s.includes("TPL")) return 3;
+  if(s.includes("TWIN")) return 2;
+  if(s.includes("DBL")) return 2;
+  if(s === "SGL") return 1;
+  return "";
+}
+function beyFindHeaderInfo(rows){
+  for(let i=0;i<Math.min(rows.length,30);i++){
+    const row = (rows[i] || []).map(v=>clean(v).toUpperCase());
+    const paxIdx = row.indexOf("PAX");
+    const apPatIdx = row.indexOf("APELLIDO PATERNO");
+    const apMatIdx = row.indexOf("APELLIDO MATERNO");
+    const primerNombreIdx = row.indexOf("PRIMER NOMBRE");
+    const segundoNombreIdx = row.indexOf("SEGUNDO NOMBRE");
+    const roomIdx = row.indexOf("TIPO DE HABITACIÓN");
+    if(paxIdx >= 0 && apPatIdx >= 0 && apMatIdx >= 0 && primerNombreIdx >= 0 && roomIdx >= 0){
+      return {
+        rowIndex: i,
+        paxIdx,
+        apPatIdx,
+        apMatIdx,
+        primerNombreIdx,
+        segundoNombreIdx,
+        roomIdx
+      };
+    }
+  }
+  return null;
+}
+function beySplitGuest(row, headerInfo){
+  const lastName = [clean(row[headerInfo.apPatIdx]), clean(row[headerInfo.apMatIdx])].filter(Boolean).join(" ");
+  const firstName = [clean(row[headerInfo.primerNombreIdx]), clean(row[headerInfo.segundoNombreIdx])].filter(Boolean).join(" ");
+  const joined = (lastName + " " + firstName).toUpperCase();
+  let specials = "";
+  if(joined.includes("GUIDE")) specials = "Guide";
+  if(joined.includes("DRIVER")) specials = "Driver";
+  return { lastName, firstName, specials };
+}
+function beyUpdateStats(){
+  q("beyStatRooms").textContent=beyParsedRooms.length;
+  q("beyStatDBL").textContent=beyParsedRooms.filter(x=>x.roomType==="DBL").length;
+  q("beyStatTWI").textContent=beyParsedRooms.filter(x=>x.roomType==="TWI").length;
+  q("beyStatTRI").textContent=beyParsedRooms.filter(x=>x.roomType==="TRI").length;
+  q("beyStatAdults").textContent=beyParsedRooms.reduce((a,b)=>a+Number(b.adult||0),0);
+}
+function beyRender(){
+  const tb=q("beyTbody"); tb.innerHTML="";
+  const arrivalDisplay=formatDateEU(q("beyArrival").value);
+  const departureDisplay=formatDateEU(q("beyDeparture").value);
+  const payment=q("beyPayment").value;
+  beyParsedRooms.forEach((g,i)=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td>${i+1}</td><td><input value="${escapeHtml(g.name)}" data-i="${i}" data-k="name"></td><td><input value="${escapeHtml(g.firstName)}" data-i="${i}" data-k="firstName"></td><td>${escapeHtml(arrivalDisplay)}</td><td>${escapeHtml(departureDisplay)}</td><td><select data-i="${i}" data-k="roomType"><option value="DBL" ${g.roomType==="DBL"?"selected":""}>DBL</option><option value="TWI" ${g.roomType==="TWI"?"selected":""}>TWI</option><option value="TRI" ${g.roomType==="TRI"?"selected":""}>TRI</option></select></td><td><input value="${escapeHtml(g.adult)}" data-i="${i}" data-k="adult"></td><td>${escapeHtml(payment)}</td><td>${escapeHtml(g.source)}</td><td class="action-cell"><button class="danger" onclick="beyDeleteRow(${i})">Löschen</button></td>`;
+    tb.appendChild(tr);
+  });
+  bindTableInputs("beyTbody", beyParsedRooms, beyUpdateStats);
+  beyUpdateStats();
+  q("beySummary").innerHTML=`<b>${beyParsedRooms.length}</b> Zimmer erkannt | Arrival: ${clean(arrivalDisplay)} | Departure: ${clean(departureDisplay)}`;
+}
+async function beyAnalyze(){
+  const file=q("beyFile").files[0];
+  if(!file){ alert("Bitte Bey-Tours-Datei wählen"); return; }
+  const wb=await loadWorkbook(file);
+  const ws=wb.Sheets[wb.SheetNames[0]];
+  const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:""});
+  beyParsedRooms=[];
+  const headerInfo=beyFindHeaderInfo(rows);
+  if(!headerInfo){ beyLog("Header PAX / APELLIDO PATERNO / TIPO DE HABITACIÓN nicht gefunden."); beyRender(); return; }
+  for(let i=headerInfo.rowIndex+1;i<rows.length;i++){
+    const row=rows[i]||[];
+    const pax=clean(row[headerInfo.paxIdx]);
+    const rooming=clean(row[headerInfo.roomIdx]);
+    const hasGuestData = clean(row[headerInfo.apPatIdx]) || clean(row[headerInfo.apMatIdx]) || clean(row[headerInfo.primerNombreIdx]) || clean(row[headerInfo.segundoNombreIdx]);
+    if(!pax && !hasGuestData && !rooming) continue;
+    if(!rooming) continue;
+    const guest=beySplitGuest(row, headerInfo);
+    beyParsedRooms.push({
+      name: guest.lastName,
+      firstName: guest.firstName,
+      roomType: beyMapRoomType(rooming),
+      adult: beyAdult(rooming),
+      specials: guest.specials,
+      source: rooming
+    });
+  }
+  beyRender();
+  beyLog("Analyse fertig: "+beyParsedRooms.length+" Zimmer");
+}
+async function beyMaybeLoadTemplate(){ await ensureTemplateBuffer(beyLog); }
+function beyExportRows(){
+  return beyParsedRooms.map((g,i)=>({line:i+1,name:g.name,firstName:g.firstName,arrival:q("beyArrival").value,departure:q("beyDeparture").value,roomType:g.roomType,payment:q("beyPayment").value,adult:g.adult,specials:g.specials}));
+}
+function beyExport(useTemplate){
+  if(!beyParsedRooms.length){ alert("Bitte zuerst Bey Tours analysieren"); return; }
+  const rows=beyExportRows();
+  if(useTemplate){
+    downloadWithTemplate(rows, "BeyTours_PMS_Hub_Template.xlsx");
+  } else {
+    buildBlankWorkbook(rows, "Rooming List", "BeyTours_PMS_Hub.xlsx");
+  }
+  beyLog("Export erstellt: "+rows.length+" Zeilen");
+}
+function beyDeleteRow(i){ beyParsedRooms.splice(i,1); beyRender(); }
+function beyAddRow(){ beyParsedRooms.push({name:"", firstName:"", roomType:"DBL", adult:2, specials:"", source:""}); beyRender(); }
+
 q("viyaAnalyzeBtn").onclick=viyaAnalyze;
 q("viyaPickTemplateBtn").onclick=async ()=>{ try{ await pickTemplateManually(viyaLog); }catch(err){ viyaLog("Template-Auswahl Fehler: " + err.message); alert(err.message); } };
 q("viyaExportBtn").onclick=async ()=>{ try{ await viyaMaybeLoadTemplate(); viyaExport(true); }catch(err){ viyaLog("Template-Export Fehler: " + err.message); alert(err.message); } };
@@ -860,9 +1045,16 @@ q("exaExportBtn").onclick=async ()=>{ try{ await exaMaybeLoadTemplate(); exaExpo
 q("exaExportBlankBtn").onclick=()=>exaExport(false);
 q("exaAddRowBtn").onclick=exaAddRow;
 
+q("beyAnalyzeBtn").onclick=beyAnalyze;
+q("beyPickTemplateBtn").onclick=async ()=>{ try{ await pickTemplateManually(beyLog); }catch(err){ beyLog("Template-Auswahl Fehler: " + err.message); alert(err.message); } };
+q("beyExportBtn").onclick=async ()=>{ try{ await beyMaybeLoadTemplate(); beyExport(true); }catch(err){ beyLog("Template-Export Fehler: " + err.message); alert(err.message); } };
+q("beyExportBlankBtn").onclick=()=>beyExport(false);
+q("beyAddRowBtn").onclick=beyAddRow;
+
 viyaLog("Viya-Modul geladen");
 emeLog("Emetravel-Modul geladen");
 exaLog("Exa-Modul geladen");
+beyLog("Bey-Tours-Modul geladen");
 </script>
 </body>
 </html>
