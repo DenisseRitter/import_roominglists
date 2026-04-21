@@ -47,7 +47,7 @@ th:nth-child(6), td:nth-child(6){width:160px}
 .note{background:#fffbeb;border:1px solid #fde68a;color:#92400e;padding:10px 12px;border-radius:12px;font-size:13px}
 .ok{background:#ecfdf5;border:1px solid #a7f3d0;color:#065f46;padding:10px 12px;border-radius:12px;font-size:13px}
 .log{white-space:pre-wrap;background:#0f172a;color:#e2e8f0;padding:12px;border-radius:12px;font-family:ui-monospace,monospace;font-size:12px;min-height:90px}
-.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.stats{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
 .stat{background:#f8fafc;border:1px solid var(--line);border-radius:14px;padding:12px}
 .stat b{display:block;font-size:22px}
 .small{font-size:12px;color:var(--muted)}
@@ -68,6 +68,7 @@ td input, td select{padding:7px 8px;font-size:13px}
     <button class="navbtn" data-page="page-exa">Exa Travel</button>
     <button class="navbtn" data-page="page-bey">Bey Tours</button>
     <button class="navbtn" data-page="page-eur">Eurorutas</button>
+    <button class="navbtn" data-page="page-mas">Maseuropa</button>
     <button class="navbtn" data-page="page-future">Weitere Kunden</button>
   </aside>
 
@@ -112,7 +113,8 @@ td input, td select{padding:7px 8px;font-size:13px}
       <div class="card">
         <div class="stats">
           <div class="stat"><b id="viyaStatRooms">0</b><span class="small">erkannte Zimmer</span></div>
-          <div class="stat"><b id="viyaStatDBL">0</b><span class="small">DBL</span></div>
+          <div class="stat"><b id="viyaStatDBL1">0</b><span class="small">DBL 1P</span></div>
+          <div class="stat"><b id="viyaStatDBL2">0</b><span class="small">DBL 2P</span></div>
           <div class="stat"><b id="viyaStatTWI">0</b><span class="small">TWI</span></div>
           <div class="stat"><b id="viyaStatTRI">0</b><span class="small">TRI</span></div>
           <div class="stat"><b id="viyaStatAdults">0</b><span class="small">Adults gesamt</span></div>
@@ -178,7 +180,8 @@ td input, td select{padding:7px 8px;font-size:13px}
       <div class="card">
         <div class="stats">
           <div class="stat"><b id="emeStatRooms">0</b><span class="small">erkannte Zimmer</span></div>
-          <div class="stat"><b id="emeStatDBL">0</b><span class="small">DBL</span></div>
+          <div class="stat"><b id="emeStatDBL1">0</b><span class="small">DBL 1P</span></div>
+          <div class="stat"><b id="emeStatDBL2">0</b><span class="small">DBL 2P</span></div>
           <div class="stat"><b id="emeStatTWI">0</b><span class="small">TWI</span></div>
           <div class="stat"><b id="emeStatTRI">0</b><span class="small">TRI</span></div>
           <div class="stat"><b id="emeStatAdults">0</b><span class="small">Adults gesamt</span></div>
@@ -258,7 +261,8 @@ td input, td select{padding:7px 8px;font-size:13px}
       <div class="card">
         <div class="stats">
           <div class="stat"><b id="exaStatRooms">0</b><span class="small">erkannte Zimmer</span></div>
-          <div class="stat"><b id="exaStatDBL">0</b><span class="small">DBL</span></div>
+          <div class="stat"><b id="exaStatDBL1">0</b><span class="small">DBL 1P</span></div>
+          <div class="stat"><b id="exaStatDBL2">0</b><span class="small">DBL 2P</span></div>
           <div class="stat"><b id="exaStatTWI">0</b><span class="small">TWI</span></div>
           <div class="stat"><b id="exaStatTRI">0</b><span class="small">TRI</span></div>
           <div class="stat"><b id="exaStatAdults">0</b><span class="small">Adults gesamt</span></div>
@@ -324,7 +328,8 @@ td input, td select{padding:7px 8px;font-size:13px}
       <div class="card">
         <div class="stats">
           <div class="stat"><b id="beyStatRooms">0</b><span class="small">erkannte Zimmer</span></div>
-          <div class="stat"><b id="beyStatDBL">0</b><span class="small">DBL</span></div>
+          <div class="stat"><b id="beyStatDBL1">0</b><span class="small">DBL 1P</span></div>
+          <div class="stat"><b id="beyStatDBL2">0</b><span class="small">DBL 2P</span></div>
           <div class="stat"><b id="beyStatTWI">0</b><span class="small">TWI</span></div>
           <div class="stat"><b id="beyStatTRI">0</b><span class="small">TRI</span></div>
           <div class="stat"><b id="beyStatAdults">0</b><span class="small">Adults gesamt</span></div>
@@ -392,7 +397,8 @@ td input, td select{padding:7px 8px;font-size:13px}
       <div class="card">
         <div class="stats">
           <div class="stat"><b id="eurStatRooms">0</b><span class="small">erkannte Zimmer</span></div>
-          <div class="stat"><b id="eurStatDBL">0</b><span class="small">DBL</span></div>
+          <div class="stat"><b id="eurStatDBL1">0</b><span class="small">DBL 1P</span></div>
+          <div class="stat"><b id="eurStatDBL2">0</b><span class="small">DBL 2P</span></div>
           <div class="stat"><b id="eurStatTWI">0</b><span class="small">TWI</span></div>
           <div class="stat"><b id="eurStatTRI">0</b><span class="small">TRI</span></div>
           <div class="stat"><b id="eurStatAdults">0</b><span class="small">Adults gesamt</span></div>
@@ -419,6 +425,75 @@ td input, td select{padding:7px 8px;font-size:13px}
 
       <div class="card"><div id="eurLog" class="log"></div></div>
     </section>
+
+
+    <section id="page-mas" class="page">
+      <h1>Maseuropa</h1>
+      <p class="desc">Eigene Logik für Maseuropa-PDF-Roominglisten. Die Zimmerart wird primär aus <b>Observaciones</b> gelesen.</p>
+
+      <div class="card">
+        <div class="note">
+          <b>Maseuropa-Regeln:</b><br>
+          Bei <b>2 Adults</b> wird die Zimmerart über <b>Observaciones</b> erkannt:
+          <b>DBL MAT</b>, <b>DOBLE MATRIMONIAL</b>, <b>DBL + INF</b>, <b>DBL+MNR</b>, <b>1dbl-1bed</b>, <b>DOUBLE ROOM (1 bed)</b> usw. ⇒ <b>DBL</b>.<br>
+          <b>TWIN</b>, <b>TWIN ROOM (2 beds)</b>, <b>Oc 1 Habitacion Twin</b> oder Text mit <b>Twin</b>/<b>2 beds</b> ⇒ <b>TWI</b>.<br>
+          Bei <b>3 Adults</b> wird immer <b>TRI</b> gesetzt. Bei <b>1 Adult</b> wird für dieses Modul immer <b>DBL</b> exportiert.
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="grid">
+          <div><label>Maseuropa PDF</label><input id="masFile" type="file" accept=".pdf"></div>
+          <div><label>PMS Template</label><input value="Standard Template aktiv" disabled></div>
+          <div><label>Anreise</label><input id="masArrival" type="date"></div>
+          <div><label>Abreise</label><input id="masDeparture" type="date"></div>
+          <div>
+            <label>Payment</label>
+            <select id="masPayment"><option value="CA">CA</option><option value="CC">CC</option><option value="BT">BT</option></select>
+          </div>
+          <div><label>Singles</label><input value="Für Maseuropa fix als DBL" disabled></div>
+        </div>
+        <div style="height:12px"></div>
+        <div class="row">
+          <button id="masAnalyzeBtn">Maseuropa analysieren</button>
+          <button id="masExportBtn" class="green">Mit Standard-Template exportieren</button>
+          <button id="masPickTemplateBtn" class="secondary">Template-Datei wählen</button>
+          <button id="masExportBlankBtn" class="secondary">Ohne Template exportieren</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="stats">
+          <div class="stat"><b id="masStatRooms">0</b><span class="small">erkannte Zimmer</span></div>
+          <div class="stat"><b id="masStatDBL1">0</b><span class="small">DBL 1P</span></div>
+          <div class="stat"><b id="masStatDBL2">0</b><span class="small">DBL 2P</span></div>
+          <div class="stat"><b id="masStatTWI">0</b><span class="small">TWI</span></div>
+          <div class="stat"><b id="masStatTRI">0</b><span class="small">TRI</span></div>
+          <div class="stat"><b id="masStatAdults">0</b><span class="small">Adults gesamt</span></div>
+        </div>
+        <div style="height:12px"></div>
+        <div class="ok" id="masSummary">Noch keine PDF analysiert.</div>
+      </div>
+
+      <div class="card">
+        <div class="row" style="margin-bottom:12px">
+          <button id="masAddRowBtn" class="secondary">Zeile hinzufügen</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Line</th><th>Name</th><th>First Name</th><th>Arrival</th><th>Departure</th><th>Room Type</th><th>Adults</th><th>Payment</th><th>Quelle</th><th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="masTbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card"><div id="masLog" class="log"></div></div>
+    </section>
+
 
     <section id="page-future" class="page">
       <h1>Weitere Kunden</h1>
@@ -674,7 +749,8 @@ function viyaAutoDates(rows){
 }
 function viyaUpdateStats(){
   q("viyaStatRooms").textContent=viyaParsedRooms.length;
-  q("viyaStatDBL").textContent=viyaParsedRooms.filter(x=>x.roomType==="DBL").length;
+  q("viyaStatDBL1").textContent=viyaParsedRooms.filter(x=>x.roomType==="DBL" && Number(x.adult||0)===1).length;
+  q("viyaStatDBL2").textContent=viyaParsedRooms.filter(x=>x.roomType==="DBL" && Number(x.adult||0)===2).length;
   q("viyaStatTWI").textContent=viyaParsedRooms.filter(x=>x.roomType==="TWI").length;
   q("viyaStatTRI").textContent=viyaParsedRooms.filter(x=>x.roomType==="TRI").length;
   q("viyaStatAdults").textContent=viyaParsedRooms.reduce((a,b)=>a+Number(b.adult||0),0);
@@ -781,7 +857,8 @@ function emeFindHeaderRow(rows){
 }
 function emeUpdateStats(){
   q("emeStatRooms").textContent=emeParsedRooms.length;
-  q("emeStatDBL").textContent=emeParsedRooms.filter(x=>x.roomType==="DBL").length;
+  q("emeStatDBL1").textContent=emeParsedRooms.filter(x=>x.roomType==="DBL" && Number(x.adult||0)===1).length;
+  q("emeStatDBL2").textContent=emeParsedRooms.filter(x=>x.roomType==="DBL" && Number(x.adult||0)===2).length;
   q("emeStatTWI").textContent=emeParsedRooms.filter(x=>x.roomType==="TWI").length;
   q("emeStatTRI").textContent=emeParsedRooms.filter(x=>x.roomType==="TRI").length;
   q("emeStatAdults").textContent=emeParsedRooms.reduce((a,b)=>a+Number(b.adult||0),0);
@@ -864,7 +941,8 @@ function exaSpecials(lastName, firstName){
 }
 function exaUpdateStats(){
   q("exaStatRooms").textContent=exaParsedRooms.length;
-  q("exaStatDBL").textContent=exaParsedRooms.filter(x=>x.roomType==="DBL").length;
+  q("exaStatDBL1").textContent=exaParsedRooms.filter(x=>x.roomType==="DBL" && Number(x.adult||0)===1).length;
+  q("exaStatDBL2").textContent=exaParsedRooms.filter(x=>x.roomType==="DBL" && Number(x.adult||0)===2).length;
   q("exaStatTWI").textContent=exaParsedRooms.filter(x=>x.roomType==="TWI").length;
   q("exaStatTRI").textContent=exaParsedRooms.filter(x=>x.roomType==="TRI").length;
   q("exaStatAdults").textContent=exaParsedRooms.reduce((a,b)=>a+Number(b.adult||0),0);
@@ -1032,7 +1110,8 @@ function beySplitGuest(row, headerInfo){
 }
 function beyUpdateStats(){
   q("beyStatRooms").textContent=beyParsedRooms.length;
-  q("beyStatDBL").textContent=beyParsedRooms.filter(x=>x.roomType==="DBL").length;
+  q("beyStatDBL1").textContent=beyParsedRooms.filter(x=>x.roomType==="DBL" && Number(x.adult||0)===1).length;
+  q("beyStatDBL2").textContent=beyParsedRooms.filter(x=>x.roomType==="DBL" && Number(x.adult||0)===2).length;
   q("beyStatTWI").textContent=beyParsedRooms.filter(x=>x.roomType==="TWI").length;
   q("beyStatTRI").textContent=beyParsedRooms.filter(x=>x.roomType==="TRI").length;
   q("beyStatAdults").textContent=beyParsedRooms.reduce((a,b)=>a+Number(b.adult||0),0);
@@ -1096,6 +1175,253 @@ function beyExport(useTemplate){
 }
 function beyDeleteRow(i){ beyParsedRooms.splice(i,1); beyRender(); }
 function beyAddRow(){ beyParsedRooms.push({name:"", firstName:"", roomType:"DBL", adult:2, specials:"", source:""}); beyRender(); }
+
+
+/* -------- MASEUROPA -------- */
+let masParsedRooms = [];
+function masLog(m){ q("masLog").textContent = new Date().toLocaleTimeString()+" "+m+"\n"+q("masLog").textContent; }
+function masNormalizeText(v){
+  return clean(v)
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .toUpperCase();
+}
+function masExtractDates(text){
+  const m = String(text || '').match(/(\d{2}\/\d{2}\/\d{4})\s*-\s*(\d{2}\/\d{2}\/\d{4})/);
+  if(m){
+    const arrival = parseDateFromAny(m[1]);
+    const departure = parseDateFromAny(m[2]);
+    if(arrival && !q("masArrival").value) q("masArrival").value = arrival;
+    if(departure && !q("masDeparture").value) q("masDeparture").value = departure;
+  }
+}
+function masIsIgnorableLine(line){
+  const s = clean(line);
+  return !s
+    || /^Ibis Zurich/i.test(s)
+    || /^Heidi-Abel-Weg/i.test(s)
+    || /^Régimen:/i.test(s)
+    || /^Regimen:/i.test(s)
+    || /^MASEUROPA$/i.test(s)
+    || /^Circuito:/i.test(s)
+    || /^N[º°]\s*grupo:/i.test(s)
+    || /^Localizador Titular Pasajeros/i.test(s)
+    || /^Powered by TCPDF/i.test(s);
+}
+function masGetSectionType(line){
+  const s = clean(line).toUpperCase();
+  if(/^SGL TOTAL:/.test(s)) return 'SGL';
+  if(/^DBL\/TWN TOTAL:/.test(s) || /^DBL\/TWN\b/.test(s)) return 'DBLTWN';
+  if(/^TPL TOTAL:/.test(s) || /^TPL\b/.test(s)) return 'TPL';
+  return '';
+}
+function masReadPdfText(file){
+  return eurReadPdfText(file);
+}
+function masExtractRecords(text){
+  const lines = String(text || '').split(/\r?\n+/).map(x=>clean(x)).filter(Boolean);
+  const records = [];
+  let section = '';
+  let current = null;
+  for(const line of lines){
+    const sectionType = masGetSectionType(line);
+    if(sectionType){
+      if(current) records.push(current);
+      section = sectionType;
+      current = null;
+      continue;
+    }
+    if(masIsIgnorableLine(line)) continue;
+    if(/^#\d+/.test(line)){
+      if(current) records.push(current);
+      current = { section, lines:[line] };
+      continue;
+    }
+    if(current){
+      current.lines.push(line);
+    }
+  }
+  if(current) records.push(current);
+  return records;
+}
+function masRoomTypeFromObservation(adults, obs, section){
+  const o = masNormalizeText(obs);
+  if(adults >= 3 || section === 'TPL') return 'TRI';
+  if(adults <= 1 || section === 'SGL') return 'DBL';
+
+  const hasTwin =
+    o.includes('TWIN') ||
+    o.includes('2 BEDS') ||
+    o.includes('2BEDS');
+  const hasDbl =
+    o === '' ||
+    /\bDBL\b/.test(o) ||
+    o.includes('DOBLE MATRIMONIAL') ||
+    o.includes('DOUBLE ROOM (1 BED)') ||
+    o.includes('1DBL-1BED') ||
+    o.includes('1DBL- 1BED') ||
+    o.includes('DBL MAT') ||
+    o.includes('DBL + IN') ||
+    o.includes('DBL + INF') ||
+    o.includes('DBL+MNR') ||
+    o.includes('1 BED') ||
+    (o.includes('DOBLE') && !o.includes('TWIN'));
+
+  if(hasTwin && !hasDbl) return 'TWI';
+  if(hasDbl) return 'DBL';
+  if(section === 'DBLTWN') return 'DBL';
+  return 'DBL';
+}
+function masAdultsFromRoomType(roomType, adults){
+  if(roomType === 'TRI') return 3;
+  if(roomType === 'DBL' || roomType === 'TWI') return adults || 2;
+  return adults || 0;
+}
+function masDetectSpecials(text){
+  const t = masNormalizeText(text);
+  if(t.includes('CHOFER') || t.includes('DRIVER')) return 'Driver';
+  if(t.includes('GUIA') || t.includes('GUIDE')) return 'Guide';
+  return '';
+}
+function masLooksLikeLocatorToken(token){
+  const t = clean(token);
+  if(!t) return false;
+  return /[_\d/]/.test(t) || t.includes('***');
+}
+function masCollapseRepeatedName(line){
+  const tokens = clean(line).split(/\s+/).filter(Boolean);
+  if(tokens.length >= 4 && tokens.length % 2 === 0){
+    const half = tokens.length / 2;
+    const left = tokens.slice(0, half).join(' ');
+    const right = tokens.slice(half).join(' ');
+    if(masNormalizeText(left) === masNormalizeText(right)) return left;
+  }
+  return clean(line);
+}
+function masTokenizeNames(lines){
+  let parts = [];
+  lines.forEach((line, idx)=>{
+    let s = clean(line);
+    if(idx === 0) s = s.replace(/^#\d+\s+/, '');
+    if(!s) return;
+    parts.push(s);
+  });
+  if(!parts.length) return [];
+
+  let firstTokens = parts[0].split(/\s+/).filter(Boolean);
+  while(firstTokens.length && masLooksLikeLocatorToken(firstTokens[0])){
+    firstTokens.shift();
+  }
+  parts[0] = firstTokens.join(' ').trim();
+
+  parts = parts.filter(Boolean).map(masCollapseRepeatedName);
+
+  if(parts.length >= 2 && masNormalizeText(parts[0]) === masNormalizeText(parts[1])){
+    parts.shift();
+  }
+  return parts.filter(Boolean);
+}
+function masPickPrimaryPassenger(candidateLines){
+  if(!candidateLines.length) return '';
+  if(candidateLines.length === 1) return candidateLines[0];
+  const first = masCollapseRepeatedName(candidateLines[0]);
+  if(masNormalizeText(first) !== masNormalizeText(candidateLines[0])) return first;
+  return candidateLines[1];
+}
+function masSplitGuestName(fullName, specials){
+  let name = masCollapseRepeatedName(fullName)
+    .replace(/\s+/g,' ')
+    .replace(/^\*+|\*+$/g,'')
+    .trim();
+  if(!name){
+    return { lastName: specials || '', firstName:'', specials: specials || '' };
+  }
+  if(specials === 'Guide') return { lastName:'Guide', firstName:'', specials:'Guide' };
+  if(specials === 'Driver') return { lastName:'Driver', firstName:'', specials:'Driver' };
+
+  const parts = name.split(/\s+/).filter(Boolean);
+  if(parts.length === 1) return { lastName:parts[0], firstName:'', specials:'' };
+  if(parts.length === 2) return { lastName:parts[1], firstName:parts[0], specials:'' };
+  if(parts.length === 3) return { lastName:parts[2], firstName:parts.slice(0,2).join(' '), specials:'' };
+  return { lastName:parts.slice(2).join(' '), firstName:parts.slice(0,2).join(' '), specials:'' };
+}
+function masParseRecord(record){
+  const joined = record.lines.join('\n');
+  const flat = joined.replace(/\n+/g,' ').replace(/\s+/g,' ').trim();
+  const countMatch = flat.match(/\b([123])\s+0(?:\s+(.*))?$/i);
+  if(!countMatch) return null;
+  const adults = Number(countMatch[1] || 0);
+  const observation = clean(countMatch[2] || '');
+  const special = masDetectSpecials(flat);
+
+  let nameLines = [...record.lines];
+  const lastLine = clean(nameLines[nameLines.length - 1] || '');
+  const lastLineWithoutTail = lastLine.replace(/\b([123])\s+0(?:\s+.*)?$/i,'').trim();
+  nameLines[nameLines.length - 1] = lastLineWithoutTail;
+  nameLines = nameLines.filter(Boolean);
+
+  const candidateLines = masTokenizeNames(nameLines);
+  const primaryGuest = masPickPrimaryPassenger(candidateLines);
+  const split = masSplitGuestName(primaryGuest, special);
+  const roomType = masRoomTypeFromObservation(adults, observation, record.section);
+
+  return {
+    name: split.lastName,
+    firstName: split.firstName,
+    roomType,
+    adult: masAdultsFromRoomType(roomType, adults),
+    specials: split.specials || special || '',
+    source: (record.section ? record.section + ' | ' : '') + (observation || ('Adults ' + adults))
+  };
+}
+function masUpdateStats(){
+  q("masStatRooms").textContent=masParsedRooms.length;
+  q("masStatDBL1").textContent=masParsedRooms.filter(x=>x.roomType==="DBL" && Number(x.adult||0)===1).length;
+  q("masStatDBL2").textContent=masParsedRooms.filter(x=>x.roomType==="DBL" && Number(x.adult||0)===2).length;
+  q("masStatTWI").textContent=masParsedRooms.filter(x=>x.roomType==="TWI").length;
+  q("masStatTRI").textContent=masParsedRooms.filter(x=>x.roomType==="TRI").length;
+  q("masStatAdults").textContent=masParsedRooms.reduce((a,b)=>a+Number(b.adult||0),0);
+}
+function masRender(){
+  const tb=q("masTbody"); tb.innerHTML="";
+  const arrivalDisplay=formatDateEU(q("masArrival").value);
+  const departureDisplay=formatDateEU(q("masDeparture").value);
+  const payment=q("masPayment").value;
+  masParsedRooms.forEach((g,i)=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td>${i+1}</td><td><input value="${escapeHtml(g.name)}" data-i="${i}" data-k="name"></td><td><input value="${escapeHtml(g.firstName)}" data-i="${i}" data-k="firstName"></td><td>${escapeHtml(arrivalDisplay)}</td><td>${escapeHtml(departureDisplay)}</td><td><select data-i="${i}" data-k="roomType"><option value="DBL" ${g.roomType==="DBL"?"selected":""}>DBL</option><option value="TWI" ${g.roomType==="TWI"?"selected":""}>TWI</option><option value="TRI" ${g.roomType==="TRI"?"selected":""}>TRI</option></select></td><td><input value="${escapeHtml(g.adult)}" data-i="${i}" data-k="adult"></td><td>${escapeHtml(payment)}</td><td>${escapeHtml(g.source)}</td><td class="action-cell"><button class="danger" onclick="masDeleteRow(${i})">Löschen</button></td>`;
+    tb.appendChild(tr);
+  });
+  bindTableInputs("masTbody", masParsedRooms, masUpdateStats);
+  masUpdateStats();
+  q("masSummary").innerHTML=`<b>${masParsedRooms.length}</b> Zimmer erkannt | Arrival: ${clean(arrivalDisplay)} | Departure: ${clean(departureDisplay)}`;
+}
+async function masAnalyze(){
+  const file=q("masFile").files[0];
+  if(!file){ alert("Bitte Maseuropa-PDF wählen"); return; }
+  const text = await masReadPdfText(file);
+  masExtractDates(text);
+  const records = masExtractRecords(text);
+  masParsedRooms = records.map(r=>masParseRecord(r)).filter(Boolean);
+  masRender();
+  masLog("Analyse fertig: " + masParsedRooms.length + " Zimmer");
+}
+async function masMaybeLoadTemplate(){ await ensureTemplateBuffer(masLog); }
+function masExportRows(){
+  return masParsedRooms.map((g,i)=>({line:i+1,name:g.name,firstName:g.firstName,arrival:q("masArrival").value,departure:q("masDeparture").value,roomType:g.roomType,payment:q("masPayment").value,adult:g.adult,specials:g.specials}));
+}
+function masExport(useTemplate){
+  if(!masParsedRooms.length){ alert("Bitte zuerst Maseuropa analysieren"); return; }
+  const rows=masExportRows();
+  if(useTemplate){
+    downloadWithTemplate(rows, "Maseuropa_PMS_Hub_Template.xlsx");
+  } else {
+    buildBlankWorkbook(rows, "Rooming List", "Maseuropa_PMS_Hub.xlsx");
+  }
+  masLog("Export erstellt: " + rows.length + " Zeilen");
+}
+function masDeleteRow(i){ masParsedRooms.splice(i,1); masRender(); }
+function masAddRow(){ masParsedRooms.push({name:"", firstName:"", roomType:"DBL", adult:2, specials:"", source:""}); masRender(); }
+
 
 /* -------- EURORUTAS -------- */
 let eurParsedRooms = [];
@@ -1197,7 +1523,8 @@ function eurParseNumberedLine(line, nextLine){
 }
 function eurUpdateStats(){
   q("eurStatRooms").textContent=eurParsedRooms.length;
-  q("eurStatDBL").textContent=eurParsedRooms.filter(x=>x.roomType==="DBL").length;
+  q("eurStatDBL1").textContent=eurParsedRooms.filter(x=>x.roomType==="DBL" && Number(x.adult||0)===1).length;
+  q("eurStatDBL2").textContent=eurParsedRooms.filter(x=>x.roomType==="DBL" && Number(x.adult||0)===2).length;
   q("eurStatTWI").textContent=eurParsedRooms.filter(x=>x.roomType==="TWI").length;
   q("eurStatTRI").textContent=eurParsedRooms.filter(x=>x.roomType==="TRI").length;
   q("eurStatAdults").textContent=eurParsedRooms.reduce((a,b)=>a+Number(b.adult||0),0);
@@ -1292,11 +1619,18 @@ q("eurExportBtn").onclick=async ()=>{ try{ await eurMaybeLoadTemplate(); eurExpo
 q("eurExportBlankBtn").onclick=()=>eurExport(false);
 q("eurAddRowBtn").onclick=eurAddRow;
 
+q("masAnalyzeBtn").onclick=masAnalyze;
+q("masPickTemplateBtn").onclick=async ()=>{ try{ await pickTemplateManually(masLog); }catch(err){ masLog("Template-Auswahl Fehler: " + err.message); alert(err.message); } };
+q("masExportBtn").onclick=async ()=>{ try{ await masMaybeLoadTemplate(); masExport(true); }catch(err){ masLog("Template-Export Fehler: " + err.message); alert(err.message); } };
+q("masExportBlankBtn").onclick=()=>masExport(false);
+q("masAddRowBtn").onclick=masAddRow;
+
 viyaLog("Viya-Modul geladen");
 emeLog("Emetravel-Modul geladen");
 exaLog("Exa-Modul geladen");
 beyLog("Bey-Tours-Modul geladen");
 eurLog("Eurorutas-Modul geladen");
+masLog("Maseuropa-Modul geladen");
 </script>
 </body>
 </html>
