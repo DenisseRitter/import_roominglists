@@ -47,7 +47,7 @@ th:nth-child(6), td:nth-child(6){width:160px}
 .note{background:#fffbeb;border:1px solid #fde68a;color:#92400e;padding:10px 12px;border-radius:12px;font-size:13px}
 .ok{background:#ecfdf5;border:1px solid #a7f3d0;color:#065f46;padding:10px 12px;border-radius:12px;font-size:13px}
 .log{white-space:pre-wrap;background:#0f172a;color:#e2e8f0;padding:12px;border-radius:12px;font-family:ui-monospace,monospace;font-size:12px;min-height:90px}
-.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.stats{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
 .stat{background:#f8fafc;border:1px solid var(--line);border-radius:14px;padding:12px}
 .stat b{display:block;font-size:22px}
 .small{font-size:12px;color:var(--muted)}
@@ -114,7 +114,8 @@ td input, td select{padding:7px 8px;font-size:13px}
       <div class="card">
         <div class="stats">
           <div class="stat"><b id="viyaStatRooms">0</b><span class="small">erkannte Zimmer</span></div>
-          <div class="stat"><b id="viyaStatDBL">0</b><span class="small">DBL</span></div>
+          <div class="stat"><b id="viyaStatDBL1">0</b><span class="small">DBL 1P</span></div>
+          <div class="stat"><b id="viyaStatDBL2">0</b><span class="small">DBL 2P</span></div>
           <div class="stat"><b id="viyaStatTWI">0</b><span class="small">TWI</span></div>
           <div class="stat"><b id="viyaStatTRI">0</b><span class="small">TRI</span></div>
           <div class="stat"><b id="viyaStatAdults">0</b><span class="small">Adults gesamt</span></div>
@@ -180,7 +181,8 @@ td input, td select{padding:7px 8px;font-size:13px}
       <div class="card">
         <div class="stats">
           <div class="stat"><b id="emeStatRooms">0</b><span class="small">erkannte Zimmer</span></div>
-          <div class="stat"><b id="emeStatDBL">0</b><span class="small">DBL</span></div>
+          <div class="stat"><b id="emeStatDBL1">0</b><span class="small">DBL 1P</span></div>
+          <div class="stat"><b id="emeStatDBL2">0</b><span class="small">DBL 2P</span></div>
           <div class="stat"><b id="emeStatTWI">0</b><span class="small">TWI</span></div>
           <div class="stat"><b id="emeStatTRI">0</b><span class="small">TRI</span></div>
           <div class="stat"><b id="emeStatAdults">0</b><span class="small">Adults gesamt</span></div>
@@ -260,7 +262,8 @@ td input, td select{padding:7px 8px;font-size:13px}
       <div class="card">
         <div class="stats">
           <div class="stat"><b id="exaStatRooms">0</b><span class="small">erkannte Zimmer</span></div>
-          <div class="stat"><b id="exaStatDBL">0</b><span class="small">DBL</span></div>
+          <div class="stat"><b id="exaStatDBL1">0</b><span class="small">DBL 1P</span></div>
+          <div class="stat"><b id="exaStatDBL2">0</b><span class="small">DBL 2P</span></div>
           <div class="stat"><b id="exaStatTWI">0</b><span class="small">TWI</span></div>
           <div class="stat"><b id="exaStatTRI">0</b><span class="small">TRI</span></div>
           <div class="stat"><b id="exaStatAdults">0</b><span class="small">Adults gesamt</span></div>
@@ -326,7 +329,8 @@ td input, td select{padding:7px 8px;font-size:13px}
       <div class="card">
         <div class="stats">
           <div class="stat"><b id="beyStatRooms">0</b><span class="small">erkannte Zimmer</span></div>
-          <div class="stat"><b id="beyStatDBL">0</b><span class="small">DBL</span></div>
+          <div class="stat"><b id="beyStatDBL1">0</b><span class="small">DBL 1P</span></div>
+          <div class="stat"><b id="beyStatDBL2">0</b><span class="small">DBL 2P</span></div>
           <div class="stat"><b id="beyStatTWI">0</b><span class="small">TWI</span></div>
           <div class="stat"><b id="beyStatTRI">0</b><span class="small">TRI</span></div>
           <div class="stat"><b id="beyStatAdults">0</b><span class="small">Adults gesamt</span></div>
@@ -394,7 +398,8 @@ td input, td select{padding:7px 8px;font-size:13px}
       <div class="card">
         <div class="stats">
           <div class="stat"><b id="eurStatRooms">0</b><span class="small">erkannte Zimmer</span></div>
-          <div class="stat"><b id="eurStatDBL">0</b><span class="small">DBL</span></div>
+          <div class="stat"><b id="eurStatDBL1">0</b><span class="small">DBL 1P</span></div>
+          <div class="stat"><b id="eurStatDBL2">0</b><span class="small">DBL 2P</span></div>
           <div class="stat"><b id="eurStatTWI">0</b><span class="small">TWI</span></div>
           <div class="stat"><b id="eurStatTRI">0</b><span class="small">TRI</span></div>
           <div class="stat"><b id="eurStatAdults">0</b><span class="small">Adults gesamt</span></div>
@@ -461,7 +466,8 @@ td input, td select{padding:7px 8px;font-size:13px}
       <div class="card">
         <div class="stats">
           <div class="stat"><b id="masStatRooms">0</b><span class="small">erkannte Zimmer</span></div>
-          <div class="stat"><b id="masStatDBL">0</b><span class="small">DBL</span></div>
+          <div class="stat"><b id="masStatDBL1">0</b><span class="small">DBL 1P</span></div>
+          <div class="stat"><b id="masStatDBL2">0</b><span class="small">DBL 2P</span></div>
           <div class="stat"><b id="masStatTWI">0</b><span class="small">TWI</span></div>
           <div class="stat"><b id="masStatTRI">0</b><span class="small">TRI</span></div>
           <div class="stat"><b id="masStatAdults">0</b><span class="small">Adults gesamt</span></div>
@@ -489,10 +495,12 @@ td input, td select{padding:7px 8px;font-size:13px}
       <div class="card"><div id="masLog" class="log"></div></div>
     </section>
 
+
+
     <section id="page-pan" class="page">
       <h1>Panavision</h1>
       <p class="desc">Eigene Logik für Panavision-PDF-Roominglisten. Pro Zimmer wird nur die erste Gästezeile übernommen.</p>
-      <div class="card"><div class="note"><b>Panavision-Regeln:</b><br>Das Modul liest <b>Nº / Name / Room</b>. Bei <b>TWIN</b> oder <b>DBL</b> wird nur die erste Gästezeile exportiert, die zweite Gästezeile des Zimmers wird übersprungen.<br>Namen: vor dem ersten Komma = <b>Name</b>, nach dem Komma = <b>First Name</b>. Umbrüche im Namen werden berücksichtigt.</div></div>
+      <div class="card"><div class="note"><b>Panavision-Regeln:</b><br>Namen: vor dem ersten Komma = <b>Name</b>, nach dem Komma bis zum Umbruch = <b>First Name</b>. Bei TWIN/DBL wird die zweite Gästezeile ignoriert.</div></div>
       <div class="card">
         <div class="grid">
           <div><label>Panavision PDF</label><input id="panFile" type="file" accept=".pdf"></div>
@@ -513,20 +521,19 @@ td input, td select{padding:7px 8px;font-size:13px}
       <div class="card">
         <div class="stats">
           <div class="stat"><b id="panStatRooms">0</b><span class="small">erkannte Zimmer</span></div>
-          <div class="stat"><b id="panStatDBL">0</b><span class="small">DBL</span></div>
+          <div class="stat"><b id="panStatDBL1">0</b><span class="small">DBL 1P</span></div>
+          <div class="stat"><b id="panStatDBL2">0</b><span class="small">DBL 2P</span></div>
           <div class="stat"><b id="panStatTWI">0</b><span class="small">TWI</span></div>
           <div class="stat"><b id="panStatTRI">0</b><span class="small">TRI</span></div>
           <div class="stat"><b id="panStatAdults">0</b><span class="small">Adults gesamt</span></div>
         </div>
         <div style="height:12px"></div><div class="ok" id="panSummary">Noch keine PDF analysiert.</div>
       </div>
-      <div class="card">
-        <div class="row" style="margin-bottom:12px"><button id="panAddRowBtn" class="secondary">Zeile hinzufügen</button></div>
+      <div class="card"><div class="row" style="margin-bottom:12px"><button id="panAddRowBtn" class="secondary">Zeile hinzufügen</button></div>
         <div class="table-wrap"><table><thead><tr><th>Line</th><th>Name</th><th>First Name</th><th>Arrival</th><th>Departure</th><th>Room Type</th><th>Adults</th><th>Payment</th><th>Quelle</th><th>Action</th></tr></thead><tbody id="panTbody"></tbody></table></div>
       </div>
       <div class="card"><div id="panLog" class="log"></div></div>
     </section>
-
 
     <section id="page-future" class="page">
       <h1>Weitere Kunden</h1>
@@ -782,7 +789,8 @@ function viyaAutoDates(rows){
 }
 function viyaUpdateStats(){
   q("viyaStatRooms").textContent=viyaParsedRooms.length;
-  q("viyaStatDBL").textContent=viyaParsedRooms.filter(x=>x.roomType==="DBL").length;
+  q("viyaStatDBL1").textContent=viyaParsedRooms.filter(x=>x.roomType==="DBL" && Number(x.adult||0)===1).length;
+  q("viyaStatDBL2").textContent=viyaParsedRooms.filter(x=>x.roomType==="DBL" && Number(x.adult||0)===2).length;
   q("viyaStatTWI").textContent=viyaParsedRooms.filter(x=>x.roomType==="TWI").length;
   q("viyaStatTRI").textContent=viyaParsedRooms.filter(x=>x.roomType==="TRI").length;
   q("viyaStatAdults").textContent=viyaParsedRooms.reduce((a,b)=>a+Number(b.adult||0),0);
@@ -889,7 +897,8 @@ function emeFindHeaderRow(rows){
 }
 function emeUpdateStats(){
   q("emeStatRooms").textContent=emeParsedRooms.length;
-  q("emeStatDBL").textContent=emeParsedRooms.filter(x=>x.roomType==="DBL").length;
+  q("emeStatDBL1").textContent=emeParsedRooms.filter(x=>x.roomType==="DBL" && Number(x.adult||0)===1).length;
+  q("emeStatDBL2").textContent=emeParsedRooms.filter(x=>x.roomType==="DBL" && Number(x.adult||0)===2).length;
   q("emeStatTWI").textContent=emeParsedRooms.filter(x=>x.roomType==="TWI").length;
   q("emeStatTRI").textContent=emeParsedRooms.filter(x=>x.roomType==="TRI").length;
   q("emeStatAdults").textContent=emeParsedRooms.reduce((a,b)=>a+Number(b.adult||0),0);
@@ -972,7 +981,8 @@ function exaSpecials(lastName, firstName){
 }
 function exaUpdateStats(){
   q("exaStatRooms").textContent=exaParsedRooms.length;
-  q("exaStatDBL").textContent=exaParsedRooms.filter(x=>x.roomType==="DBL").length;
+  q("exaStatDBL1").textContent=exaParsedRooms.filter(x=>x.roomType==="DBL" && Number(x.adult||0)===1).length;
+  q("exaStatDBL2").textContent=exaParsedRooms.filter(x=>x.roomType==="DBL" && Number(x.adult||0)===2).length;
   q("exaStatTWI").textContent=exaParsedRooms.filter(x=>x.roomType==="TWI").length;
   q("exaStatTRI").textContent=exaParsedRooms.filter(x=>x.roomType==="TRI").length;
   q("exaStatAdults").textContent=exaParsedRooms.reduce((a,b)=>a+Number(b.adult||0),0);
@@ -1140,7 +1150,8 @@ function beySplitGuest(row, headerInfo){
 }
 function beyUpdateStats(){
   q("beyStatRooms").textContent=beyParsedRooms.length;
-  q("beyStatDBL").textContent=beyParsedRooms.filter(x=>x.roomType==="DBL").length;
+  q("beyStatDBL1").textContent=beyParsedRooms.filter(x=>x.roomType==="DBL" && Number(x.adult||0)===1).length;
+  q("beyStatDBL2").textContent=beyParsedRooms.filter(x=>x.roomType==="DBL" && Number(x.adult||0)===2).length;
   q("beyStatTWI").textContent=beyParsedRooms.filter(x=>x.roomType==="TWI").length;
   q("beyStatTRI").textContent=beyParsedRooms.filter(x=>x.roomType==="TRI").length;
   q("beyStatAdults").textContent=beyParsedRooms.reduce((a,b)=>a+Number(b.adult||0),0);
@@ -1316,6 +1327,18 @@ function masLooksLikeLocatorToken(token){
   if(!t) return false;
   return /[_\d/]/.test(t) || t.includes('***');
 }
+function masCollapseDuplicatedNameInLine(value){
+  const s = clean(value);
+  if(!s) return s;
+  const tokens = s.split(/\s+/).filter(Boolean);
+  if(tokens.length >= 2 && tokens.length % 2 === 0){
+    const half = tokens.length / 2;
+    const left = masNormalizeText(tokens.slice(0, half).join(' '));
+    const right = masNormalizeText(tokens.slice(half).join(' '));
+    if(left && left === right) return tokens.slice(half).join(' ');
+  }
+  return s;
+}
 function masTokenizeNames(lines){
   let parts = [];
   lines.forEach((line, idx)=>{
@@ -1326,14 +1349,19 @@ function masTokenizeNames(lines){
   });
   if(!parts.length) return [];
 
+  // In Maseuropa darf die Spalte Titular nicht als Gastname genommen werden.
+  // Darum werden am Anfang der ersten Zeile alle Code-/Titular-Tokens entfernt,
+  // bis der eigentliche Eintrag aus Pasajeros beginnt.
   let firstTokens = parts[0].split(/\s+/).filter(Boolean);
   while(firstTokens.length && masLooksLikeLocatorToken(firstTokens[0])){
     firstTokens.shift();
   }
-  parts[0] = firstTokens.join(' ').trim();
+  parts[0] = masCollapseDuplicatedNameInLine(firstTokens.join(' ').trim());
 
-  parts = parts.filter(Boolean);
+  parts = parts.map(masCollapseDuplicatedNameInLine).filter(Boolean);
 
+  // Falls Titular und Pasajeros durch den PDF-Text als zwei identische Zeilen kommen,
+  // nur den Pasajeros-Namen behalten. Die zweite Gästezeile wird später ignoriert.
   if(parts.length >= 2 && masNormalizeText(parts[0]) === masNormalizeText(parts[1])){
     parts.shift();
   }
@@ -1352,9 +1380,9 @@ function masSplitGuestName(fullName, specials){
 
   const parts = name.split(/\s+/).filter(Boolean);
   if(parts.length === 1) return { lastName:parts[0], firstName:'', specials:'' };
-  if(parts.length === 2) return { lastName:parts[0], firstName:parts[1], specials:'' };
-  if(parts.length === 3) return { lastName:parts[0] + ' ' + parts[1], firstName:parts[2], specials:'' };
-  return { lastName:parts.slice(0,2).join(' '), firstName:parts.slice(2).join(' '), specials:'' };
+  if(parts.length === 2) return { lastName:parts.slice(1).join(' '), firstName:parts.slice(0,1).join(' '), specials:'' };
+  if(parts.length === 3) return { lastName:parts.slice(2).join(' '), firstName:parts.slice(0,2).join(' '), specials:'' };
+  return { lastName:parts.slice(-2).join(' '), firstName:parts.slice(0,2).join(' '), specials:'' };
 }
 function masParseRecord(record){
   const joined = record.lines.join('\n');
@@ -1387,7 +1415,8 @@ function masParseRecord(record){
 }
 function masUpdateStats(){
   q("masStatRooms").textContent=masParsedRooms.length;
-  q("masStatDBL").textContent=masParsedRooms.filter(x=>x.roomType==="DBL").length;
+  q("masStatDBL1").textContent=masParsedRooms.filter(x=>x.roomType==="DBL" && Number(x.adult||0)===1).length;
+  q("masStatDBL2").textContent=masParsedRooms.filter(x=>x.roomType==="DBL" && Number(x.adult||0)===2).length;
   q("masStatTWI").textContent=masParsedRooms.filter(x=>x.roomType==="TWI").length;
   q("masStatTRI").textContent=masParsedRooms.filter(x=>x.roomType==="TRI").length;
   q("masStatAdults").textContent=masParsedRooms.reduce((a,b)=>a+Number(b.adult||0),0);
@@ -1534,7 +1563,8 @@ function eurParseNumberedLine(line, nextLine){
 }
 function eurUpdateStats(){
   q("eurStatRooms").textContent=eurParsedRooms.length;
-  q("eurStatDBL").textContent=eurParsedRooms.filter(x=>x.roomType==="DBL").length;
+  q("eurStatDBL1").textContent=eurParsedRooms.filter(x=>x.roomType==="DBL" && Number(x.adult||0)===1).length;
+  q("eurStatDBL2").textContent=eurParsedRooms.filter(x=>x.roomType==="DBL" && Number(x.adult||0)===2).length;
   q("eurStatTWI").textContent=eurParsedRooms.filter(x=>x.roomType==="TWI").length;
   q("eurStatTRI").textContent=eurParsedRooms.filter(x=>x.roomType==="TRI").length;
   q("eurStatAdults").textContent=eurParsedRooms.reduce((a,b)=>a+Number(b.adult||0),0);
@@ -1599,32 +1629,13 @@ function eurExport(useTemplate){
 function eurDeleteRow(i){ eurParsedRooms.splice(i,1); eurRender(); }
 function eurAddRow(){ eurParsedRooms.push({name:"", firstName:"", roomType:"DBL", adult:2, specials:"", source:""}); eurRender(); }
 
+
 /* -------- PANAVISION -------- */
 let panParsedRooms = [];
 function panLog(m){ q("panLog").textContent = new Date().toLocaleTimeString()+" "+m+"\n"+q("panLog").textContent; }
-function panMapRoomType(room){
-  const s = clean(room).toUpperCase();
-  if(s.includes("TWIN") || s.includes("TWN")) return "TWI";
-  if(s.includes("TRIPLE") || s.includes("TPL")) return "TRI";
-  if(s.includes("DBL") || s.includes("DOUBLE")) return "DBL";
-  if(s.includes("SGL") || s.includes("SINGLE")) return q("panSingleMode").value;
-  return "";
-}
-function panAdult(room){
-  const s = clean(room).toUpperCase();
-  if(s.includes("TWIN") || s.includes("TWN") || s.includes("DBL") || s.includes("DOUBLE")) return 2;
-  if(s.includes("TRIPLE") || s.includes("TPL")) return 3;
-  if(s.includes("SGL") || s.includes("SINGLE")) return 1;
-  return "";
-}
-function panSkipCount(room){
-  const s = clean(room).toUpperCase();
-  if(s.includes("TRIPLE") || s.includes("TPL")) return 3;
-  if(s.includes("TWIN") || s.includes("TWN") || s.includes("DBL") || s.includes("DOUBLE")) return 2;
-  return 1;
-}
-function panExtractDatesFromText(text){
-  const m = String(text||'').match(/Check-In:\s*(\d{1,2}[\/.-]\d{1,2}[\/.-]\d{2,4})\s+Check-Out:\s*(\d{1,2}[\/.-]\d{1,2}[\/.-]\d{2,4})/i);
+function panReadPdfText(file){ return eurReadPdfText(file); }
+function panExtractDates(text){
+  const m = String(text || '').match(/Check-In:\s*(\d{1,2}\/\d{1,2}\/\d{2,4})\s+Check-Out:\s*(\d{1,2}\/\d{1,2}\/\d{2,4})/i);
   if(m){
     const arrival = parseDateFromAny(m[1]);
     const departure = parseDateFromAny(m[2]);
@@ -1632,90 +1643,59 @@ function panExtractDatesFromText(text){
     if(departure && !q("panDeparture").value) q("panDeparture").value = departure;
   }
 }
-async function panReadPdfPages(file){
-  if(typeof pdfjsLib === 'undefined') throw new Error('PDF-Bibliothek konnte nicht geladen werden.');
-  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-  const data = new Uint8Array(await file.arrayBuffer());
-  const pdf = await pdfjsLib.getDocument({data}).promise;
-  const pages = [];
-  for(let p=1; p<=pdf.numPages; p++){
-    const page = await pdf.getPage(p);
-    const content = await page.getTextContent();
-    pages.push(content.items.map(it=>({text:String(it.str||'').trim(),x:(it.transform&&it.transform[4])||0,y:Math.round((it.transform&&it.transform[5])||0)})).filter(it=>it.text));
+function panMapRoomType(room){
+  const s = clean(room).toUpperCase();
+  if(s.includes('TWIN') || s === 'TWN') return 'TWI';
+  if(s.includes('DBL') || s.includes('DOUBLE')) return 'DBL';
+  if(s.includes('TPL') || s.includes('TRIPLE')) return 'TRI';
+  if(s.includes('SGL') || s.includes('SINGLE')) return q("panSingleMode").value;
+  return '';
+}
+function panAdult(room){
+  const s = clean(room).toUpperCase();
+  if(s.includes('TWIN') || s === 'TWN' || s.includes('DBL') || s.includes('DOUBLE')) return 2;
+  if(s.includes('TPL') || s.includes('TRIPLE')) return 3;
+  if(s.includes('SGL') || s.includes('SINGLE')) return 1;
+  return 0;
+}
+function panSplitName(nameText){
+  const s = clean(nameText).replace(/\s*,\s*/g, ', ').trim();
+  if(/GUIDE/i.test(s)) return {lastName:'Guide', firstName:'', specials:'Guide'};
+  if(/CHOF|DRIVER/i.test(s)) return {lastName:'Driver', firstName:'', specials:'Driver'};
+  const idx = s.indexOf(',');
+  if(idx >= 0) return { lastName: clean(s.slice(0, idx)), firstName: clean(s.slice(idx + 1)), specials:'' };
+  const parts = s.split(/\s+/).filter(Boolean);
+  return { lastName:parts.slice(0,2).join(' '), firstName:parts.slice(2).join(' '), specials:'' };
+}
+function panLinesFromText(text){
+  const raw = String(text||'').split(/\r?\n/).map(x=>clean(x)).filter(Boolean);
+  const rows = [];
+  const names = [];
+  const rooms = [];
+  let inNames = false, inRooms = false;
+  for(const line of raw){
+    if(line === 'Name'){ inNames=true; inRooms=false; continue; }
+    if(line === 'Room'){ inRooms=true; inNames=false; continue; }
+    if(inNames){
+      if(/^(TWIN|DBL|SGL|TPL|HB|BB|Localizador|Encantos|EASY GOING|Nights)$/i.test(line)) { inNames=false; }
+      else if(line.includes(',') || (names.length && !/^\d+$/.test(line))) {
+        if(line.includes(',') || !names[names.length-1]?.includes(', ')) names.push(line);
+        else names[names.length-1] += ' ' + line;
+        continue;
+      }
+    }
+    if(inRooms){
+      if(/^(TWIN|DBL|SGL|TPL|TWN)$/i.test(line)) rooms.push(line.toUpperCase());
+      else if(/^(HB|BB|\d+|Localizador|Encantos|EASY GOING)/i.test(line)) { if(rooms.length) inRooms=false; }
+    }
   }
-  return pages;
-}
-function panGroupLines(items){
-  const groups=[];
-  items.slice().sort((a,b)=>b.y-a.y||a.x-b.x).forEach(it=>{
-    let g=groups.find(gr=>Math.abs(gr.y-it.y)<=2);
-    if(!g){g={y:it.y,items:[]};groups.push(g)}
-    g.items.push(it);
-  });
-  groups.forEach(g=>g.items.sort((a,b)=>a.x-b.x));
-  return groups.sort((a,b)=>b.y-a.y);
-}
-function panFindColumns(lines){
-  let nameX=120, roomX=430;
-  lines.forEach(g=>g.items.forEach(it=>{
-    const t=clean(it.text).toUpperCase();
-    if(t==='NAME') nameX=it.x;
-    if(t==='ROOM') roomX=it.x;
-  }));
-  return {nameX,roomX};
-}
-function panPlain(g){ return g.items.map(it=>it.text).join(' ').replace(/\s+/g,' ').trim(); }
-function panLooksLikeFooter(s){ return /^(LOCALIZADOR|\d{1,2}\/\d{1,2}\/\d{2,4}|NIGHTS|#\s*GUESTS|SGL|DBL|TPL|QPL|MPL|LD|BB|HB|FB|TI|ROOMS|BOARDS|ENCANTOS|EASY GOING|PAGE\s+\d+)/i.test(clean(s)); }
-function panRoomFromItems(items, roomX){
-  return (items.filter(it=>it.x>=roomX-25 && /^(TWIN|TWN|DBL|DOUBLE|SGL|SINGLE|TPL|TRIPLE)$/i.test(clean(it.text))).map(it=>clean(it.text))[0] || '');
-}
-function panNumberFromItems(items, nameX){
-  const nums=items.filter(it=>it.x<nameX-8 && /^\d{1,3}$/.test(clean(it.text))).map(it=>Number(clean(it.text))).filter(n=>n>=1&&n<=300);
-  return nums.length ? nums[nums.length-1] : null;
-}
-function panNameFromItems(items, nameX, roomX){
-  return items.filter(it=>it.x>=nameX-5 && it.x<roomX-8).map(it=>it.text).join(' ').replace(/\s+/g,' ').trim();
-}
-function panExtractGuests(pages){
-  const guests=[];
-  pages.forEach(items=>{
-    const lines=panGroupLines(items), cols=panFindColumns(lines);
-    let current=null;
-    lines.forEach(g=>{
-      const plain=panPlain(g); if(!plain || panLooksLikeFooter(plain)) return;
-      const room=panRoomFromItems(g.items, cols.roomX);
-      const nr=panNumberFromItems(g.items, cols.nameX);
-      const namePart=panNameFromItems(g.items, cols.nameX, cols.roomX);
-      if(nr && room && namePart){ if(current) guests.push(current); current={nr,room,nameText:namePart}; return; }
-      if(current && !nr && !room && namePart && !panLooksLikeFooter(namePart)) current.nameText=clean(current.nameText+' '+namePart);
-    });
-    if(current) guests.push(current);
-  });
-  return guests.sort((a,b)=>a.nr-b.nr);
-}
-function panSplitName(full){
-  const s=clean(full).replace(/\s+/g,' ').trim();
-  const idx=s.indexOf(',');
-  const specials=/GUIDE/i.test(s)?'Guide':(/CHOF|CHOFER|DRIVER/i.test(s)?'Driver':'');
-  if(idx<0){ const p=s.split(/\s+/).filter(Boolean); return {lastName:p.slice(-2).join(' '), firstName:p.slice(0,Math.max(1,p.length-2)).join(' '), specials}; }
-  const lastName=clean(s.slice(0,idx));
-  let firstName=clean(s.slice(idx+1)).replace(/\((GUIDE|DRIVER|CHOFER)[^)]*\)/ig,'').trim();
-  return {lastName, firstName, specials};
-}
-function panBuildRoomsFromGuests(guests){
-  const rooms=[];
-  for(let i=0;i<guests.length;){
-    const g=guests[i], roomType=panMapRoomType(g.room);
-    if(!roomType){ i++; continue; }
-    const split=panSplitName(g.nameText);
-    rooms.push({name:split.lastName, firstName:split.firstName, roomType, adult:panAdult(g.room), specials:split.specials||'', source:g.room+' / Gastzeile '+g.nr});
-    i += panSkipCount(g.room);
-  }
-  return rooms;
+  for(let i=0;i<Math.min(names.length, rooms.length);i++) rows.push({name:names[i], room:rooms[i]});
+  return rows;
 }
 function panUpdateStats(){
   q("panStatRooms").textContent=panParsedRooms.length;
-  q("panStatDBL").textContent=panParsedRooms.filter(x=>x.roomType==="DBL").length;
+  q("panStatDBL1").textContent=panParsedRooms.filter(x=>x.roomType==="DBL" && Number(x.adult||0)===1).length;
+  q("panStatDBL2").textContent=panParsedRooms.filter(x=>x.roomType==="DBL" && Number(x.adult||0)===2).length;
   q("panStatTWI").textContent=panParsedRooms.filter(x=>x.roomType==="TWI").length;
   q("panStatTRI").textContent=panParsedRooms.filter(x=>x.roomType==="TRI").length;
   q("panStatAdults").textContent=panParsedRooms.reduce((a,b)=>a+Number(b.adult||0),0);
@@ -1725,33 +1705,30 @@ function panRender(){
   const arrivalDisplay=formatDateEU(q("panArrival").value), departureDisplay=formatDateEU(q("panDeparture").value), payment=q("panPayment").value;
   panParsedRooms.forEach((g,i)=>{
     const tr=document.createElement("tr");
-    tr.innerHTML='<td>'+(i+1)+'</td><td><input value="'+escapeHtml(g.name)+'" data-i="'+i+'" data-k="name"></td><td><input value="'+escapeHtml(g.firstName)+'" data-i="'+i+'" data-k="firstName"></td><td>'+escapeHtml(arrivalDisplay)+'</td><td>'+escapeHtml(departureDisplay)+'</td><td><select data-i="'+i+'" data-k="roomType"><option value="DBL" '+(g.roomType==="DBL"?"selected":"")+'>DBL</option><option value="TWI" '+(g.roomType==="TWI"?"selected":"")+'>TWI</option><option value="TRI" '+(g.roomType==="TRI"?"selected":"")+'>TRI</option></select></td><td><input value="'+escapeHtml(g.adult)+'" data-i="'+i+'" data-k="adult"></td><td>'+escapeHtml(payment)+'</td><td>'+escapeHtml(g.source)+'</td><td class="action-cell"><button class="danger" onclick="panDeleteRow('+i+')">Löschen</button></td>';
+    tr.innerHTML=`<td>${i+1}</td><td><input value="${escapeHtml(g.name)}" data-i="${i}" data-k="name"></td><td><input value="${escapeHtml(g.firstName)}" data-i="${i}" data-k="firstName"></td><td>${escapeHtml(arrivalDisplay)}</td><td>${escapeHtml(departureDisplay)}</td><td><select data-i="${i}" data-k="roomType"><option value="DBL" ${g.roomType==="DBL"?"selected":""}>DBL</option><option value="TWI" ${g.roomType==="TWI"?"selected":""}>TWI</option><option value="TRI" ${g.roomType==="TRI"?"selected":""}>TRI</option></select></td><td><input value="${escapeHtml(g.adult)}" data-i="${i}" data-k="adult"></td><td>${escapeHtml(payment)}</td><td>${escapeHtml(g.source)}</td><td class="action-cell"><button class="danger" onclick="panDeleteRow(${i})">Löschen</button></td>`;
     tb.appendChild(tr);
   });
-  bindTableInputs("panTbody", panParsedRooms, panUpdateStats);
-  panUpdateStats();
-  q("panSummary").innerHTML='<b>'+panParsedRooms.length+'</b> Zimmer erkannt | Arrival: '+clean(arrivalDisplay)+' | Departure: '+clean(departureDisplay);
+  bindTableInputs("panTbody", panParsedRooms, panUpdateStats); panUpdateStats();
+  q("panSummary").innerHTML=`<b>${panParsedRooms.length}</b> Zimmer erkannt | Arrival: ${clean(arrivalDisplay)} | Departure: ${clean(departureDisplay)}`;
 }
 async function panAnalyze(){
-  const file=q("panFile").files[0];
-  if(!file){ alert("Bitte Panavision-PDF wählen"); return; }
-  const pages=await panReadPdfPages(file);
-  panExtractDatesFromText(pages.map(items=>items.map(it=>it.text).join(' ')).join('\n'));
-  const guests=panExtractGuests(pages);
-  panParsedRooms=panBuildRoomsFromGuests(guests);
-  panRender();
-  panLog("Analyse fertig: "+panParsedRooms.length+" Zimmer aus "+guests.length+" Gästezeilen. TWIN/DBL-Zweitzeilen wurden übersprungen.");
+  const file=q("panFile").files[0]; if(!file){ alert("Bitte Panavision-PDF wählen"); return; }
+  const text = await panReadPdfText(file); panExtractDates(text);
+  const guestRows = panLinesFromText(text);
+  panParsedRooms = [];
+  for(let i=0; i<guestRows.length; i++){
+    const row = guestRows[i], roomType = panMapRoomType(row.room); if(!roomType) continue;
+    const split = panSplitName(row.name);
+    panParsedRooms.push({name:split.lastName, firstName:split.firstName, roomType, adult:panAdult(row.room), specials:split.specials||'', source:row.room});
+    const a = panAdult(row.room); if(a===2) i += 1; if(a===3) i += 2;
+  }
+  panRender(); panLog("Analyse fertig: " + panParsedRooms.length + " Zimmer");
 }
 async function panMaybeLoadTemplate(){ await ensureTemplateBuffer(panLog); }
 function panExportRows(){ return panParsedRooms.map((g,i)=>({line:i+1,name:g.name,firstName:g.firstName,arrival:q("panArrival").value,departure:q("panDeparture").value,roomType:g.roomType,payment:q("panPayment").value,adult:g.adult,specials:g.specials})); }
-function panExport(useTemplate){
-  if(!panParsedRooms.length){ alert("Bitte zuerst Panavision analysieren"); return; }
-  const rows=panExportRows();
-  if(useTemplate) downloadWithTemplate(rows,"Panavision_PMS_Hub_Template.xlsx"); else buildBlankWorkbook(rows,"Rooming List","Panavision_PMS_Hub.xlsx");
-  panLog("Export erstellt: "+rows.length+" Zeilen");
-}
+function panExport(useTemplate){ if(!panParsedRooms.length){ alert("Bitte zuerst Panavision analysieren"); return; } const rows=panExportRows(); if(useTemplate){ downloadWithTemplate(rows, "Panavision_PMS_Hub_Template.xlsx"); } else { buildBlankWorkbook(rows, "Rooming List", "Panavision_PMS_Hub.xlsx"); } panLog("Export erstellt: " + rows.length + " Zeilen"); }
 function panDeleteRow(i){ panParsedRooms.splice(i,1); panRender(); }
-function panAddRow(){ panParsedRooms.push({name:"",firstName:"",roomType:"TWI",adult:2,specials:"",source:"manuell"}); panRender(); }
+function panAddRow(){ panParsedRooms.push({name:"", firstName:"", roomType:"DBL", adult:2, specials:"", source:""}); panRender(); }
 
 q("viyaAnalyzeBtn").onclick=viyaAnalyze;
 q("viyaPickTemplateBtn").onclick=async ()=>{ try{ await pickTemplateManually(viyaLog); }catch(err){ viyaLog("Template-Auswahl Fehler: " + err.message); alert(err.message); } };
